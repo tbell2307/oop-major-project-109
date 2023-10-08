@@ -3,7 +3,7 @@
 int main()
 {
     // Create the window with 612 x 612 because: 12 tiles * (50 size + 2 grid lines)
-    sf::RenderWindow window(sf::VideoMode(612, 612), "My Farm");
+    sf::RenderWindow window(sf::VideoMode(612, 712), "My Farm");
 
     // Load textures
     sf::Texture texture;
@@ -16,6 +16,33 @@ int main()
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
     {
         return -1;
+    }
+
+    sf::Texture inventoryTexture;
+    if (!inventoryTexture.loadFromFile("src/assets/inventory.jpeg"))
+    {
+        return -1;
+    }
+
+    sf::Texture inventoryBackgroundTexture;
+    if (!inventoryBackgroundTexture.loadFromFile("src/assets/inventory-background.jpeg"))
+    {
+        return -1;
+    }
+
+    int inventoryBackgroundStartY = 620;
+    int inventoryBackgroundTileSize = 50;
+
+    sf::RectangleShape inventoryBackgroundTiles[12][2];
+
+    for (int i = 0; i < 12; ++i)
+    {
+        for (int j = 0; j < 2; ++j)
+        {
+            inventoryBackgroundTiles[i][j].setSize(sf::Vector2f(inventoryBackgroundTileSize, inventoryBackgroundTileSize));
+            inventoryBackgroundTiles[i][j].setPosition(i * 52, inventoryBackgroundStartY + j * 52);
+            inventoryBackgroundTiles[i][j].setTexture(&inventoryBackgroundTexture);
+        }
     }
 
     // Define tile size
@@ -41,6 +68,23 @@ int main()
                 tiles[i][j].setTexture(&texture);
             }
         }
+    }
+
+    int inventorySize = 10;
+    sf::RectangleShape inventory[inventorySize];
+    int inventoryTileSize = 50;
+    // Manually set the starting X position
+    int startX = 52;
+    int startY = 640;
+
+    // Initialise the inventory bar
+    for (int i = 0; i < 10; ++i)
+    {
+        inventory[i].setSize(sf::Vector2f(50, 50));
+        inventory[i].setPosition(startX + i * 52, startY);
+        inventory[i].setTexture(&inventoryTexture);
+        inventory[i].setOutlineColor(sf::Color::Black);
+        inventory[i].setOutlineThickness(2);
     }
 
     // Render person sprite
@@ -103,7 +147,7 @@ int main()
                     int personTileY = static_cast<int>(person.getPosition().y) / (tileSize + 2);
 
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
-                    if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1)
+                    if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
                     {
                         tiles[x][y].setFillColor(sf::Color::Red);
                     }
@@ -114,6 +158,7 @@ int main()
             {
                 // Add directional controls using W S A D
                 sf::Vector2f pos = person.getPosition();
+
                 switch (event.key.code)
                 {
                 case sf::Keyboard::W:
@@ -131,7 +176,18 @@ int main()
                 default:
                     break;
                 }
-                person.setPosition(pos);
+
+                float lowerLimitY = 640.0f;
+                float upperLimitY = 0.0f;
+                float lowerLimitX = 0.0f;
+                float upperLimitX = 640.0f;
+
+                // Check if the new position is within the limits
+                if (pos.y >= upperLimitY && pos.y <= lowerLimitY - (tileSize + 2) &&
+                    pos.x >= lowerLimitX && pos.x <= upperLimitX - (tileSize + 2))
+                {
+                    person.setPosition(pos);
+                }
             }
             break;
 
@@ -150,6 +206,21 @@ int main()
             {
                 window.draw(tiles[i][j]);
             }
+        }
+
+        // Draw the inventory background tiles
+        for (int i = 0; i < 12; ++i)
+        {
+            for (int j = 0; j < 2; ++j)
+            {
+                window.draw(inventoryBackgroundTiles[i][j]);
+            }
+        }
+
+        // Draw the inventory bar
+        for (int i = 0; i < 10; ++i)
+        {
+            window.draw(inventory[i]);
         }
 
         window.draw(person);
