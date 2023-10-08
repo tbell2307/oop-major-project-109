@@ -1,168 +1,161 @@
-#include "Farm.hpp"
-#include "Crop.hpp"
-#include "Parsnip.hpp"
-#include "Kale.hpp"
-#include "Radish.hpp"
-#include "Wheat.hpp"
-#include "Eggplant.hpp"
-#include "Beetroot.hpp"
+#include <SFML/Graphics.hpp>
 
-#include <iostream>
+int main()
+{
+    // Create the window with 612 x 612 because: 12 tiles * (50 size + 2 grid lines)
+    sf::RenderWindow window(sf::VideoMode(612, 612), "My Farm");
 
-int main(void) {
-    //get the name of the farm from the user
-    std::string name;
-    std::cout << "Enter a name for your farm: ";
-    std::getline(std::cin, name);
-    //get the location of the farm from the user
-    std::string location;
-    std::cout << "Where will your farm be located?: ";
-    std::getline(std::cin, location);
-    //get the x and  y dimensions of the farm from user
-    int x, y;
-    std::cout << "How big would you like your farm to be? Enter the X dimsensions: ";
-    std::cin >> x;
-    std::cout << "Enter the Y dimensions: ";
-    std::cin >> y;
-    //create the farm
-    Farm farm(name, location, x, y); // Set the dimensions of the farm field
-    //calculate the maximum number of crops
-    int maxCrops = farm.getMaxCrops(); 
-    //create an array to store the crops
-    Crop* crops[maxCrops]; 
-    //print basic farm information 
-    std::cout << "The dimensions of " << farm.getName() << " farm located in " << farm.getLocation() << " are X: " << farm.getXDim() << " units and Y: " << farm.getYDim() << " units." << std::endl;
-    int currentCropCount = 0; 
-    bool continuePlanting = true;
-    //print the crop varieties
-    std::string cropOptions[6] = {"Parsnip", "Kale", "Radish", "Wheat", "Eggplant", "Beetroot"};
-    //get crop inputs from the user, adding these to both the array in the main file (crops) as well as the array in the Farm class.
-    while (continuePlanting && currentCropCount < maxCrops) {
-        std::cout << "The available crop options are..." << std::endl;
-        for (int i = 0; i < sizeof(cropOptions) / sizeof(std::string); i++) {
-            std::cout << cropOptions[i];
-            if (i != ((sizeof(cropOptions) / sizeof(std::string) - 1))) {
-                std::cout << " | ";
-            }
-        }
-        std::string cropToPlant;
-        std::cout << std::endl << "Enter the crop you would like to plant in " << farm.getName() << " Farm: ";
-        std::cin >> cropToPlant;
-        //if the user entered "Parsnip"...
-        if (cropToPlant == cropOptions[0]) {
-            Parsnip* parsnip = new Parsnip("Parsnip", "Spring", 4);
-            int x, y;
-            std::cout << "Enter the x-coordinate for planting: ";
-            std::cin >> x;
-            std::cout << "Enter the y-coordinate for planting: ";
-            std::cin >> y;
+    // Load textures
+    sf::Texture texture;
+    if (!texture.loadFromFile("src/assets/grass.jpg"))
+    {
+        return -1;
+    }
 
-            if (farm.addCrop(parsnip, x, y)) {
-                crops[currentCropCount] = parsnip;
-                currentCropCount++;
-            } else {
-                std::cout << "Failed to plant the parsnip. Check if the coordinates are valid." << std::endl;
-                delete parsnip;
+    sf::Texture pathTexture;
+    if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
+    {
+        return -1;
+    }
+
+    // Define tile size
+    int tileSize = 50;
+    sf::RectangleShape tiles[12][12];
+
+    // Loop for rendering farm tiles
+    for (int i = 0; i < 12; ++i)
+    {
+        for (int j = 0; j < 12; ++j)
+        {
+            tiles[i][j].setSize(sf::Vector2f(tileSize, tileSize));
+            tiles[i][j].setPosition(i * (tileSize + 2), j * (tileSize + 2));
+
+            if (i == 0 || i == 11 || j == 0 || j == 11)
+            {
+                // Set the outside ring as a path texture
+                tiles[i][j].setTexture(&pathTexture);
             }
-        //if the user entered "Kale"...
-        } else if (cropToPlant == cropOptions[1]) {
-            Kale* kale = new Kale("Kale", "Spring", 6);
-            int x, y;
-            std::cout << "Enter the x-coordinate for planting: ";
-            std::cin >> x;
-            std::cout << "Enter the y-coordinate for planting: ";
-            std::cin >> y;
-            if (farm.addCrop(kale, x, y)) {
-                crops[currentCropCount] = kale;
-                currentCropCount++;
-            } else {
-                std::cout << "Failed to plant the kale. Check if the coordinates are valid." << std::endl;
-                delete kale;
+            else
+            {
+                // Set the tiles to be grass textured
+                tiles[i][j].setTexture(&texture);
             }
-        //if the user entered "Radish"...
-        } else if (cropToPlant == cropOptions[2]) {
-            Radish* radish = new Radish("Radish", "Summer", 6);
-            int x, y;
-            std::cout << "Enter the x-coordinate for planting: ";
-            std::cin >> x;
-            std::cout << "Enter the y-coordinate for planting: ";
-            std::cin >> y;
-            if (farm.addCrop(radish, x, y)) {
-                crops[currentCropCount] = radish;
-                currentCropCount++;
-            } else {
-                std::cout << "Failed to plant the radish. Check if the coordinates are valid." << std::endl;
-                delete radish;
-            }
-        //if the user entered "Wheat"...
-        } else if (cropToPlant == cropOptions[3]) {
-            Wheat* wheat = new Wheat("Wheat", "Summer", 4);
-            int x, y;
-            std::cout << "Enter the x-coordinate for planting: ";
-            std::cin >> x;
-            std::cout << "Enter the y-coordinate for planting: ";
-            std::cin >> y;
-            if (farm.addCrop(wheat, x, y)) {
-                crops[currentCropCount] = wheat;
-                currentCropCount++;
-            } else {
-                std::cout << "Failed to plant the wheat. Check if the coordinates are valid." << std::endl;
-                delete wheat;
-            }
-        //if the user entered "Eggplant"...
-        } else if (cropToPlant == cropOptions[4]) {
-            Eggplant* eggplant = new Eggplant("Eggplant", "Autumn", 5);
-            int x, y;
-            std::cout << "Enter the x-coordinate for planting: ";
-            std::cin >> x;
-            std::cout << "Enter the y-coordinate for planting: ";
-            std::cin >> y;
-            if (farm.addCrop(eggplant, x, y)) {
-                crops[currentCropCount] = eggplant;
-                currentCropCount++;
-            } else {
-                std::cout << "Failed to plant the wheat. Check if the coordinates are valid." << std::endl;
-                delete eggplant;
-            }
-        //if the user entered "Beetroot"...
-        } else if (cropToPlant == cropOptions[5]) {
-            Beetroot* beetroot = new Beetroot("Beetroot", "Autumn", 6);
-            int x, y;
-            std::cout << "Enter the x-coordinate for planting: ";
-            std::cin >> x;
-            std::cout << "Enter the y-coordinate for planting: ";
-            std::cin >> y;
-            if (farm.addCrop(beetroot, x, y)) {
-                crops[currentCropCount] = beetroot;
-                currentCropCount++;
-            } else {
-                std::cout << "Failed to plant the beetroot. Check if the coordinates are valid." << std::endl;
-                delete beetroot;
-            }
-        } else {
-            std::cout << "Invalid crop" << std::endl;
-        }
-        //ask the user if they would like to input more crops
-        std::string input;
-        std::cout << "Would you like to plant another crop? (yes/no): ";
-        std::cin >> input;
-        if (input != "yes" && input != "Yes" && input != "YES") {
-            continuePlanting = false;
         }
     }
-    //display information about all crops in the farm
-    farm.getAllCropsInfo();
-    farm.visualizeFarmField();
-    //example of how a crop can be removed. this can be implemented into the farm.removeCrop function later.
-    std::cout << "Let's remove a crop." << std::endl << "Enter the x-coordinate for the crop you would like to remove: ";
-    std::cin >> x;
-    std::cout << "Enter the y-coordinate for this crop: ";
-    std::cin >> y;
-    Crop*** farmField = farm.getFarmField();
-    Crop* cropToRemove = farmField[x][y];
-    farm.removeCrop(cropToRemove);
-    farm.visualizeFarmField();
-    //(assuming the user entered a valid location)
-    std::cout << "The crop has been removed." << std::endl;
+
+    // Render person sprite
+    sf::Texture personTexture;
+    if (!personTexture.loadFromFile("src/assets/person.png"))
+    {
+        return -1;
+    }
+
+    // Define farmer
+    sf::Sprite person;
+    person.setTexture(personTexture);
+
+    // Scale down to fit a single tile
+    sf::Vector2u textureSize = personTexture.getSize();
+    float scaleX = static_cast<float>(tileSize) / static_cast<float>(textureSize.x);
+    float scaleY = static_cast<float>(tileSize) / static_cast<float>(textureSize.y);
+    person.setScale(scaleX, scaleY);
+
+    // Set inital position of farmer
+    person.setPosition(0, 0);
+
+    // Create a square using the grass
+    sf::RectangleShape rectangle(sf::Vector2f(50, 50));
+    rectangle.setTexture(&texture);
+
+    // Create grid lines
+    sf::RectangleShape vLine(sf::Vector2f(2, 510)); // vertical
+    sf::RectangleShape hLine(sf::Vector2f(510, 2)); // horizontal
+    vLine.setFillColor(sf::Color::White);
+    hLine.setFillColor(sf::Color::White);
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            switch (event.type)
+            {
+
+            case sf::Event::Closed:
+                window.close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    // Adding 2 for the grid lines
+                    int x = event.mouseButton.x / (tileSize + 2);
+                    int y = event.mouseButton.y / (tileSize + 2);
+
+                    // Skip if the clicked tile is a border tile
+                    if (x == 0 || x == 11 || y == 0 || y == 11)
+                    {
+                        break;
+                    }
+
+                    // Get the tile position where the farmer is standing
+                    int personTileX = static_cast<int>(person.getPosition().x) / (tileSize + 2);
+                    int personTileY = static_cast<int>(person.getPosition().y) / (tileSize + 2);
+
+                    // Check if the clicked tile is adjacent to or the same as where the person is standing
+                    if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1)
+                    {
+                        tiles[x][y].setFillColor(sf::Color::Red);
+                    }
+                }
+                break;
+
+            case sf::Event::KeyPressed:
+            {
+                // Add directional controls using W S A D
+                sf::Vector2f pos = person.getPosition();
+                switch (event.key.code)
+                {
+                case sf::Keyboard::W:
+                    pos.y -= tileSize + 2;
+                    break;
+                case sf::Keyboard::S:
+                    pos.y += tileSize + 2;
+                    break;
+                case sf::Keyboard::A:
+                    pos.x -= tileSize + 2;
+                    break;
+                case sf::Keyboard::D:
+                    pos.x += tileSize + 2;
+                    break;
+                default:
+                    break;
+                }
+                person.setPosition(pos);
+            }
+            break;
+
+            default:
+                // Do nothing for other events
+                break;
+            }
+        }
+
+        window.clear(sf::Color::Black);
+
+        // Draw a 12x12 grid of textured squares
+        for (int i = 0; i < 12; ++i)
+        {
+            for (int j = 0; j < 12; ++j)
+            {
+                window.draw(tiles[i][j]);
+            }
+        }
+
+        window.draw(person);
+
+        window.display();
+    }
+
     return 0;
 }
