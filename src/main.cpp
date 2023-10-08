@@ -3,11 +3,17 @@
 int main()
 {
     // Create the window with 612 x 612 because: 12 tiles * (50 size + 2 grid lines)
-    sf::RenderWindow window(sf::VideoMode(612, 712), "My Farm");
+    sf::RenderWindow window(sf::VideoMode(612, 900), "My Farm");
 
     // Load textures
     sf::Texture texture;
-    if (!texture.loadFromFile("src/assets/grass.jpg"))
+    if (!texture.loadFromFile("src/assets/grass.jpeg"))
+    {
+        return -1;
+    }
+
+    sf::Texture soilTexture;
+    if (!soilTexture.loadFromFile("src/assets/soil.png"))
     {
         return -1;
     }
@@ -30,17 +36,17 @@ int main()
         return -1;
     }
 
-    int inventoryBackgroundStartY = 620;
+    int inventoryBackgroundStartY = 677;
     int inventoryBackgroundTileSize = 50;
 
-    sf::RectangleShape inventoryBackgroundTiles[12][2];
+    sf::RectangleShape inventoryBackgroundTiles[13][2];
 
-    for (int i = 0; i < 12; ++i)
+    for (int i = 0; i < 13; ++i)
     {
         for (int j = 0; j < 2; ++j)
         {
             inventoryBackgroundTiles[i][j].setSize(sf::Vector2f(inventoryBackgroundTileSize, inventoryBackgroundTileSize));
-            inventoryBackgroundTiles[i][j].setPosition(i * 52, inventoryBackgroundStartY + j * 52);
+            inventoryBackgroundTiles[i][j].setPosition(i * inventoryBackgroundTileSize, inventoryBackgroundStartY + j * inventoryBackgroundTileSize); // No extra pixels
             inventoryBackgroundTiles[i][j].setTexture(&inventoryBackgroundTexture);
         }
     }
@@ -52,12 +58,12 @@ int main()
     // Loop for rendering farm tiles
     for (int i = 0; i < 12; ++i)
     {
-        for (int j = 0; j < 12; ++j)
+        for (int j = 0; j < 12; ++j) // Updated to 13 rows instead of 12
         {
             tiles[i][j].setSize(sf::Vector2f(tileSize, tileSize));
-            tiles[i][j].setPosition(i * (tileSize + 2), j * (tileSize + 2));
+            tiles[i][j].setPosition(i * (tileSize + 2), j * (tileSize + 2) + 52); // shifted by 52 pixels
 
-            if (i == 0 || i == 11 || j == 0 || j == 11)
+            if (i == 0 || i == 11 || j == 0 || j == 11) // Updated for 13 rows
             {
                 // Set the outside ring as a path texture
                 tiles[i][j].setTexture(&pathTexture);
@@ -75,13 +81,13 @@ int main()
     int inventoryTileSize = 50;
     // Manually set the starting X position
     int startX = 52;
-    int startY = 640;
+    int startY = 645;
 
     // Initialise the inventory bar
     for (int i = 0; i < 10; ++i)
     {
         inventory[i].setSize(sf::Vector2f(50, 50));
-        inventory[i].setPosition(startX + i * 52, startY);
+        inventory[i].setPosition(startX + i * 52, startY + 52);
         inventory[i].setTexture(&inventoryTexture);
         inventory[i].setOutlineColor(sf::Color::Black);
         inventory[i].setOutlineThickness(2);
@@ -105,7 +111,8 @@ int main()
     person.setScale(scaleX, scaleY);
 
     // Set inital position of farmer
-    person.setPosition(0, 0);
+    // Set initial position of farmer to be centered in tile (1, 1)
+    person.setPosition(52 + 1, 52 + 1);
 
     // Create a square using the grass
     sf::RectangleShape rectangle(sf::Vector2f(50, 50));
@@ -132,9 +139,8 @@ int main()
             case sf::Event::MouseButtonPressed:
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    // Adding 2 for the grid lines
                     int x = event.mouseButton.x / (tileSize + 2);
-                    int y = event.mouseButton.y / (tileSize + 2);
+                    int y = (event.mouseButton.y - 52) / (tileSize + 2);
 
                     // Skip if the clicked tile is a border tile
                     if (x == 0 || x == 11 || y == 0 || y == 11)
@@ -144,12 +150,12 @@ int main()
 
                     // Get the tile position where the farmer is standing
                     int personTileX = static_cast<int>(person.getPosition().x) / (tileSize + 2);
-                    int personTileY = static_cast<int>(person.getPosition().y) / (tileSize + 2);
+                    int personTileY = static_cast<int>(person.getPosition().y - 52) / (tileSize + 2);
 
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
                     {
-                        tiles[x][y].setFillColor(sf::Color::Red);
+                        tiles[x][y].setTexture(&soilTexture); // Set texture to soil
                     }
                 }
                 break;
@@ -177,10 +183,10 @@ int main()
                     break;
                 }
 
-                float lowerLimitY = 640.0f;
-                float upperLimitY = 0.0f;
+                float lowerLimitY = 692.0f;
+                float upperLimitY = 52.0f;
                 float lowerLimitX = 0.0f;
-                float upperLimitX = 640.0f;
+                float upperLimitX = 642.0f;
 
                 // Check if the new position is within the limits
                 if (pos.y >= upperLimitY && pos.y <= lowerLimitY - (tileSize + 2) &&
@@ -209,7 +215,7 @@ int main()
         }
 
         // Draw the inventory background tiles
-        for (int i = 0; i < 12; ++i)
+        for (int i = 0; i < 13; ++i)
         {
             for (int j = 0; j < 2; ++j)
             {
