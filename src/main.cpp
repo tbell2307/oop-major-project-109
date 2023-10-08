@@ -2,7 +2,7 @@
 
 int main()
 {
-    // Create the window with 612 x 612 because: 12 tiles * (50 size + 2 grid lines)
+    // Create the window
     sf::RenderWindow window(sf::VideoMode(612, 900), "My Farm");
 
     // Load textures
@@ -58,12 +58,12 @@ int main()
     // Loop for rendering farm tiles
     for (int i = 0; i < 12; ++i)
     {
-        for (int j = 0; j < 12; ++j) // Updated to 13 rows instead of 12
+        for (int j = 0; j < 12; ++j)
         {
             tiles[i][j].setSize(sf::Vector2f(tileSize, tileSize));
-            tiles[i][j].setPosition(i * (tileSize + 2), j * (tileSize + 2) + 52); // shifted by 52 pixels
+            tiles[i][j].setPosition(i * (tileSize + 2), j * (tileSize + 2) + 52);
 
-            if (i == 0 || i == 11 || j == 0 || j == 11) // Updated for 13 rows
+            if (i == 0 || i == 11 || j == 0 || j == 11)
             {
                 // Set the outside ring as a path texture
                 tiles[i][j].setTexture(&pathTexture);
@@ -110,7 +110,6 @@ int main()
     float scaleY = static_cast<float>(tileSize) / static_cast<float>(textureSize.y);
     person.setScale(scaleX, scaleY);
 
-    // Set inital position of farmer
     // Set initial position of farmer to be centered in tile (1, 1)
     person.setPosition(52 + 1, 52 + 1);
 
