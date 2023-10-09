@@ -30,6 +30,39 @@ int main()
         return -1;
     }
 
+    sf::Texture waterTexture;
+    if (!waterTexture.loadFromFile("src/assets/water.jpeg"))
+    {
+        return -1;
+    }
+
+    sf::Texture houseTexture;
+    if (!houseTexture.loadFromFile("src/assets/house.png"))
+    {
+        return -1;
+    }
+
+    sf::RectangleShape waterTiles[12];
+
+    for (int i = 0; i < 12; ++i)
+    {
+        waterTiles[i].setSize(sf::Vector2f(50, 50));
+        waterTiles[i].setPosition(i * 50, 0);
+
+        if (i == 0 || i == 1 || i == 2)
+        {
+            waterTiles[i].setTexture(&waterTexture);
+        }
+        else if (i == 8 || i == 9 || i == 10)
+        {
+            waterTiles[i].setTexture(&houseTexture);
+        }
+        else
+        {
+            waterTiles[i].setTexture(&pathTexture);
+        }
+    }
+
     sf::Texture inventoryBackgroundTexture;
     if (!inventoryBackgroundTexture.loadFromFile("src/assets/inventory-background.jpeg"))
     {
@@ -220,6 +253,12 @@ int main()
             {
                 window.draw(inventoryBackgroundTiles[i][j]);
             }
+        }
+
+        // Draw the water tiles
+        for (int i = 0; i < 12; ++i)
+        {
+            window.draw(waterTiles[i]);
         }
 
         // Draw the inventory bar
