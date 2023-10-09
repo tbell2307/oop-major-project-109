@@ -3,7 +3,7 @@
 int main()
 {
     // Create the window
-    sf::RenderWindow window(sf::VideoMode(612, 900), "My Farm");
+    sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
     // Load textures
     sf::Texture texture;
@@ -36,7 +36,7 @@ int main()
         return -1;
     }
 
-    int inventoryBackgroundStartY = 677;
+    int inventoryBackgroundStartY = 657;
     int inventoryBackgroundTileSize = 50;
 
     sf::RectangleShape inventoryBackgroundTiles[13][2];
@@ -61,7 +61,7 @@ int main()
         for (int j = 0; j < 12; ++j)
         {
             tiles[i][j].setSize(sf::Vector2f(tileSize, tileSize));
-            tiles[i][j].setPosition(i * (tileSize + 2), j * (tileSize + 2) + 52);
+            tiles[i][j].setPosition(i * (tileSize), j * (tileSize) + 52);
 
             if (i == 0 || i == 11 || j == 0 || j == 11)
             {
@@ -80,8 +80,8 @@ int main()
     sf::RectangleShape inventory[inventorySize];
     int inventoryTileSize = 50;
     // Manually set the starting X position
-    int startX = 52;
-    int startY = 645;
+    int startX = 42;
+    int startY = 625;
 
     // Initialise the inventory bar
     for (int i = 0; i < 10; ++i)
@@ -138,8 +138,8 @@ int main()
             case sf::Event::MouseButtonPressed:
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    int x = event.mouseButton.x / (tileSize + 2);
-                    int y = (event.mouseButton.y - 52) / (tileSize + 2);
+                    int x = event.mouseButton.x / (tileSize);
+                    int y = (event.mouseButton.y - 52) / (tileSize);
 
                     // Skip if the clicked tile is a border tile
                     if (x == 0 || x == 11 || y == 0 || y == 11)
@@ -148,8 +148,8 @@ int main()
                     }
 
                     // Get the tile position where the farmer is standing
-                    int personTileX = static_cast<int>(person.getPosition().x) / (tileSize + 2);
-                    int personTileY = static_cast<int>(person.getPosition().y - 52) / (tileSize + 2);
+                    int personTileX = static_cast<int>(person.getPosition().x) / (tileSize);
+                    int personTileY = static_cast<int>(person.getPosition().y - 52) / (tileSize);
 
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
@@ -167,16 +167,16 @@ int main()
                 switch (event.key.code)
                 {
                 case sf::Keyboard::W:
-                    pos.y -= tileSize + 2;
+                    pos.y -= tileSize;
                     break;
                 case sf::Keyboard::S:
-                    pos.y += tileSize + 2;
+                    pos.y += tileSize;
                     break;
                 case sf::Keyboard::A:
-                    pos.x -= tileSize + 2;
+                    pos.x -= tileSize;
                     break;
                 case sf::Keyboard::D:
-                    pos.x += tileSize + 2;
+                    pos.x += tileSize;
                     break;
                 default:
                     break;
@@ -188,8 +188,8 @@ int main()
                 float upperLimitX = 642.0f;
 
                 // Check if the new position is within the limits
-                if (pos.y >= upperLimitY && pos.y <= lowerLimitY - (tileSize + 2) &&
-                    pos.x >= lowerLimitX && pos.x <= upperLimitX - (tileSize + 2))
+                if (pos.y >= upperLimitY && pos.y <= lowerLimitY - (tileSize) &&
+                    pos.x >= lowerLimitX && pos.x <= upperLimitX - (tileSize))
                 {
                     person.setPosition(pos);
                 }
