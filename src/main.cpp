@@ -42,6 +42,23 @@ int main()
         return -1;
     }
 
+    sf::Texture hoeIconTexture;
+    if (!hoeIconTexture.loadFromFile("src/assets/hoe.png"))
+    {
+        return -1;
+    }
+
+    sf::Sprite hoeIcon;
+    hoeIcon.setTexture(hoeIconTexture);
+
+    sf::Vector2u textureSizeHoe = hoeIconTexture.getSize();
+    float scaleXHoe = static_cast<float>(50) / static_cast<float>(textureSizeHoe.x);
+    float scaleYHoe = static_cast<float>(50) / static_cast<float>(textureSizeHoe.y);
+    hoeIcon.setScale(scaleXHoe, scaleYHoe);
+
+    // Position it on the first inventory slot
+    hoeIcon.setPosition(45, 677);
+
     sf::RectangleShape waterTiles[12];
 
     for (int i = 0; i < 12; ++i)
@@ -71,6 +88,8 @@ int main()
 
     int inventoryBackgroundStartY = 657;
     int inventoryBackgroundTileSize = 50;
+
+    int selectedInventoryIndex = -1;
 
     sf::RectangleShape inventoryBackgroundTiles[13][2];
 
@@ -187,9 +206,15 @@ int main()
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
                     {
-                        tiles[x][y].setTexture(&soilTexture); // Set texture to soil
+                        // Only allow clicking the ground to change the texture if the first inventory spot is selected
+                        if (selectedInventoryIndex == 0)
+                        {
+                            tiles[x][y].setTexture(&soilTexture); // Set texture to soil
+                        }
                     }
                 }
+                break;
+
                 break;
 
             case sf::Event::KeyPressed:
@@ -225,6 +250,37 @@ int main()
                     pos.x >= lowerLimitX && pos.x <= upperLimitX - (tileSize))
                 {
                     person.setPosition(pos);
+                }
+
+                if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
+                {
+                    int newSelection = event.key.code - sf::Keyboard::Num1;
+
+                    // Reset the previous selection's border to black if any
+                    if (selectedInventoryIndex != -1)
+                    {
+                        inventory[selectedInventoryIndex].setOutlineColor(sf::Color::Black);
+                    }
+
+                    // Update the new selection
+                    selectedInventoryIndex = newSelection;
+
+                    // Set the new selection's border to white
+                    inventory[selectedInventoryIndex].setOutlineColor(sf::Color::White);
+                }
+                else if (event.key.code == sf::Keyboard::Num0)
+                {
+                    // Reset the previous selection's border to black if any
+                    if (selectedInventoryIndex != -1)
+                    {
+                        inventory[selectedInventoryIndex].setOutlineColor(sf::Color::Black);
+                    }
+
+                    // Update the new selection to the last slot
+                    selectedInventoryIndex = inventorySize - 1;
+
+                    // Set the new selection's border to white
+                    inventory[selectedInventoryIndex].setOutlineColor(sf::Color::White);
                 }
             }
             break;
@@ -266,6 +322,14 @@ int main()
         {
             window.draw(inventory[i]);
         }
+
+        // Redraw the selected inventory item to bring its border to the top
+        if (selectedInventoryIndex != -1)
+        {
+            window.draw(inventory[selectedInventoryIndex]);
+        }
+
+        window.draw(hoeIcon);
 
         window.draw(person);
 
