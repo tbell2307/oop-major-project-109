@@ -87,6 +87,12 @@ int main()
     // Position it on the first inventory slot
     wateringCanIcon.setPosition(92, 670);
 
+    // Watering can highlight
+    sf::RectangleShape blueBorder(sf::Vector2f(50, 50));
+    blueBorder.setFillColor(sf::Color::Transparent);
+    blueBorder.setOutlineThickness(1);
+    blueBorder.setOutlineColor(sf::Color::Blue);
+
     sf::RectangleShape waterTiles[12];
 
     for (int i = 0; i < 12; ++i)
@@ -134,6 +140,8 @@ int main()
     // Define tile size
     int tileSize = 50;
     sf::RectangleShape tiles[12][12];
+
+    bool highlightedTiles[12][12] = {{false}};
 
     // Loop for rendering farm tiles
     for (int i = 0; i < 12; ++i)
@@ -256,9 +264,18 @@ int main()
                             tiles[x][y].setTexture(&soilTexture);
                         }
 
-                        if (selectedInventoryIndex == 1)
+                        if (selectedInventoryIndex == 1) // Watering can is selected
                         {
-                            wateringCanClicks++;
+                            if (tiles[x][y].getTexture() == &soilTexture) // Only highlight if the tile is soil
+                            {
+                                // Only highlight if the watering can is not empty
+                                if (wateringCanTextureIndex != 4)
+                                {
+                                    highlightedTiles[x][y] = true;
+
+                                    wateringCanClicks++;
+                                }
+                            }
 
                             if (wateringCanClicks >= 6)
                             {
@@ -390,6 +407,18 @@ int main()
         window.draw(wateringCanIcon);
 
         window.draw(hoeIcon);
+
+        for (int i = 0; i < 12; ++i)
+        {
+            for (int j = 0; j < 12; ++j)
+            {
+                if (highlightedTiles[i][j])
+                {
+                    blueBorder.setPosition(i * tileSize, j * tileSize + 52);
+                    window.draw(blueBorder);
+                }
+            }
+        }
 
         window.draw(person);
 
