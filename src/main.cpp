@@ -23,6 +23,12 @@ int main()
         return -1;
     }
 
+    sf::Texture wetSoilTexture;
+    if (!wetSoilTexture.loadFromFile("src/assets/wetSoil.png"))
+    {
+        return -1;
+    }
+
     sf::Texture pathTexture;
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
     {
@@ -141,8 +147,6 @@ int main()
     int tileSize = 50;
     sf::RectangleShape tiles[12][12];
 
-    bool highlightedTiles[12][12] = {{false}};
-
     // Loop for rendering farm tiles
     for (int i = 0; i < 12; ++i)
     {
@@ -259,32 +263,27 @@ int main()
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
                     {
                         // Only allow clicking the ground to change the texture if the first inventory spot is selected
-                        if (selectedInventoryIndex == 0)
+                        if (selectedInventoryIndex == 0 && tiles[x][y].getTexture() != &wetSoilTexture)
                         {
                             tiles[x][y].setTexture(&soilTexture);
                         }
 
-                        if (selectedInventoryIndex == 1) // Watering can is selected
+                        if (selectedInventoryIndex == 1)
                         {
-                            if (tiles[x][y].getTexture() == &soilTexture) // Only highlight if the tile is soil
+                            // Only allow the tile to be watered if the watering can is not empty
+                            if (wateringCanTextureIndex != 4)
                             {
-                                // Only highlight if the watering can is not empty
-                                if (wateringCanTextureIndex != 4)
+                                if (tiles[x][y].getTexture() == &soilTexture)
                                 {
-                                    highlightedTiles[x][y] = true;
-
+                                    tiles[x][y].setTexture(&wetSoilTexture);
                                     wateringCanClicks++;
+                                    if (wateringCanClicks >= 6)
+                                    {
+                                        wateringCanClicks = 0;
+                                        wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
+                                        wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
+                                    }
                                 }
-                            }
-
-                            if (wateringCanClicks >= 6)
-                            {
-                                // Reset the counter
-                                wateringCanClicks = 0;
-                                // Cycle through textures
-                                wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
-                                // Update the texture
-                                wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
                             }
                         }
                     }
@@ -407,18 +406,6 @@ int main()
         window.draw(wateringCanIcon);
 
         window.draw(hoeIcon);
-
-        for (int i = 0; i < 12; ++i)
-        {
-            for (int j = 0; j < 12; ++j)
-            {
-                if (highlightedTiles[i][j])
-                {
-                    blueBorder.setPosition(i * tileSize, j * tileSize + 52);
-                    window.draw(blueBorder);
-                }
-            }
-        }
 
         window.draw(person);
 
