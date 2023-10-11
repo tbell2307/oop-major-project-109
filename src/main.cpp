@@ -1,7 +1,12 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 int main()
 {
+    /////////////////////////////
+    // Initialise the textures //
+    /////////////////////////////
+
     // Create the window
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
@@ -58,6 +63,29 @@ int main()
 
     // Position it on the first inventory slot
     hoeIcon.setPosition(45, 677);
+
+    sf::Texture wateringCanTextures[5];
+    for (int i = 1; i <= 5; ++i)
+    {
+        if (!wateringCanTextures[i - 1].loadFromFile("src/assets/wateringcan" + std::to_string(i) + ".png"))
+        {
+            return -1;
+        }
+    }
+
+    int wateringCanClicks = 0;
+    int wateringCanTextureIndex = 0; // Start with the first texture
+
+    sf::Sprite wateringCanIcon;
+    wateringCanIcon.setTexture(wateringCanTextures[0]);
+
+    sf::Vector2u textureSizeCan = wateringCanTextures[0].getSize();
+    float scaleXCan = static_cast<float>(65) / static_cast<float>(textureSizeCan.x);
+    float scaleYCan = static_cast<float>(65) / static_cast<float>(textureSizeCan.y);
+    wateringCanIcon.setScale(scaleXCan, scaleYCan);
+
+    // Position it on the first inventory slot
+    wateringCanIcon.setPosition(92, 670);
 
     sf::RectangleShape waterTiles[12];
 
@@ -175,8 +203,18 @@ int main()
     vLine.setFillColor(sf::Color::White);
     hLine.setFillColor(sf::Color::White);
 
+    /////////////////////////////
+    // Logic for button inputs //
+    /////////////////////////////
+
     while (window.isOpen())
     {
+        auto isWithinWaterRefillArea = [&](int mouseX, int mouseY) -> bool
+        {
+            // Logic to determine if the click is within the water refill area (top three tiles)
+            return mouseX >= 0 && mouseX <= 150 && mouseY >= 0 && mouseY <= 50;
+        };
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -188,6 +226,12 @@ int main()
                 break;
 
             case sf::Event::MouseButtonPressed:
+                if (isWithinWaterRefillArea(event.mouseButton.x, event.mouseButton.y))
+                {
+                    wateringCanTextureIndex = 0;
+                    wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
+                    wateringCanClicks = 0;
+                }
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
                     int x = event.mouseButton.x / (tileSize);
@@ -209,11 +253,25 @@ int main()
                         // Only allow clicking the ground to change the texture if the first inventory spot is selected
                         if (selectedInventoryIndex == 0)
                         {
-                            tiles[x][y].setTexture(&soilTexture); // Set texture to soil
+                            tiles[x][y].setTexture(&soilTexture);
+                        }
+
+                        if (selectedInventoryIndex == 1)
+                        {
+                            wateringCanClicks++;
+
+                            if (wateringCanClicks >= 6)
+                            {
+                                // Reset the counter
+                                wateringCanClicks = 0;
+                                // Cycle through textures
+                                wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
+                                // Update the texture
+                                wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
+                            }
                         }
                     }
                 }
-                break;
 
                 break;
 
@@ -293,7 +351,10 @@ int main()
 
         window.clear(sf::Color::Black);
 
-        // Draw a 12x12 grid of textured squares
+        //////////////////////////
+        // Drawing the graphics //
+        //////////////////////////
+
         for (int i = 0; i < 12; ++i)
         {
             for (int j = 0; j < 12; ++j)
@@ -302,7 +363,6 @@ int main()
             }
         }
 
-        // Draw the inventory background tiles
         for (int i = 0; i < 13; ++i)
         {
             for (int j = 0; j < 2; ++j)
@@ -311,13 +371,11 @@ int main()
             }
         }
 
-        // Draw the water tiles
         for (int i = 0; i < 12; ++i)
         {
             window.draw(waterTiles[i]);
         }
 
-        // Draw the inventory bar
         for (int i = 0; i < 10; ++i)
         {
             window.draw(inventory[i]);
@@ -328,6 +386,8 @@ int main()
         {
             window.draw(inventory[selectedInventoryIndex]);
         }
+
+        window.draw(wateringCanIcon);
 
         window.draw(hoeIcon);
 
