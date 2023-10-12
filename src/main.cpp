@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Person.h"
 
 int main()
 {
@@ -93,12 +94,6 @@ int main()
     // Position it on the first inventory slot
     wateringCanIcon.setPosition(92, 670);
 
-    // Watering can highlight
-    sf::RectangleShape blueBorder(sf::Vector2f(50, 50));
-    blueBorder.setFillColor(sf::Color::Transparent);
-    blueBorder.setOutlineThickness(1);
-    blueBorder.setOutlineColor(sf::Color::Blue);
-
     sf::RectangleShape waterTiles[12];
 
     for (int i = 0; i < 12; ++i)
@@ -185,24 +180,7 @@ int main()
         inventory[i].setOutlineThickness(2);
     }
 
-    // Render person sprite
-    sf::Texture personTexture;
-    if (!personTexture.loadFromFile("src/assets/person.png"))
-    {
-        return -1;
-    }
-
-    // Define farmer
-    sf::Sprite person;
-    person.setTexture(personTexture);
-
-    // Scale down to fit a single tile
-    sf::Vector2u textureSize = personTexture.getSize();
-    float scaleX = static_cast<float>(tileSize) / static_cast<float>(textureSize.x);
-    float scaleY = static_cast<float>(tileSize) / static_cast<float>(textureSize.y);
-    person.setScale(scaleX, scaleY);
-
-    // Set initial position of farmer to be centered in tile (1, 1)
+    Person person("src/assets/person.png", tileSize);
     person.setPosition(52 + 1, 52 + 1);
 
     // Create a square using the grass
@@ -256,8 +234,9 @@ int main()
                     }
 
                     // Get the tile position where the farmer is standing
-                    int personTileX = static_cast<int>(person.getPosition().x) / (tileSize);
-                    int personTileY = static_cast<int>(person.getPosition().y - 52) / (tileSize);
+                    sf::Vector2f pos = person.getPosition();
+                    int personTileX = static_cast<int>(pos.x) / (tileSize);
+                    int personTileY = static_cast<int>(pos.y - 52) / (tileSize);
 
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
@@ -323,7 +302,7 @@ int main()
                 if (pos.y >= upperLimitY && pos.y <= lowerLimitY - (tileSize) &&
                     pos.x >= lowerLimitX && pos.x <= upperLimitX - (tileSize))
                 {
-                    person.setPosition(pos);
+                    person.setPosition(pos.x, pos.y);
                 }
 
                 if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
@@ -407,7 +386,7 @@ int main()
 
         window.draw(hoeIcon);
 
-        window.draw(person);
+        window.draw(person.getSprite());
 
         window.display();
     }

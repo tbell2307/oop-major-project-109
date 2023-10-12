@@ -10,6 +10,7 @@
         "-o",
         "output",
         "src/main.cpp",
+        "src/Person.cpp",
         "-I/opt/homebrew/Cellar/sfml/2.6.0/include",
         "-L/opt/homebrew/Cellar/sfml/2.6.0/lib",
         "-lsfml-graphics",
