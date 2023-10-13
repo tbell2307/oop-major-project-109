@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Person.h"
+#include "Farm.h"
 
 int main()
 {
@@ -9,26 +10,11 @@ int main()
     /////////////////////////////
 
     // Create the window
+
+    Farm myFarm;
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
     // Load textures
-    sf::Texture texture;
-    if (!texture.loadFromFile("src/assets/grass.jpeg"))
-    {
-        return -1;
-    }
-
-    sf::Texture soilTexture;
-    if (!soilTexture.loadFromFile("src/assets/soil.png"))
-    {
-        return -1;
-    }
-
-    sf::Texture wetSoilTexture;
-    if (!wetSoilTexture.loadFromFile("src/assets/wetSoil.png"))
-    {
-        return -1;
-    }
 
     sf::Texture pathTexture;
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
@@ -140,28 +126,6 @@ int main()
 
     // Define tile size
     int tileSize = 50;
-    sf::RectangleShape tiles[12][12];
-
-    // Loop for rendering farm tiles
-    for (int i = 0; i < 12; ++i)
-    {
-        for (int j = 0; j < 12; ++j)
-        {
-            tiles[i][j].setSize(sf::Vector2f(tileSize, tileSize));
-            tiles[i][j].setPosition(i * (tileSize), j * (tileSize) + 52);
-
-            if (i == 0 || i == 11 || j == 0 || j == 11)
-            {
-                // Set the outside ring as a path texture
-                tiles[i][j].setTexture(&pathTexture);
-            }
-            else
-            {
-                // Set the tiles to be grass textured
-                tiles[i][j].setTexture(&texture);
-            }
-        }
-    }
 
     int inventorySize = 10;
     sf::RectangleShape inventory[inventorySize];
@@ -182,16 +146,6 @@ int main()
 
     Person person("src/assets/person.png", tileSize);
     person.setPosition(52 + 1, 52 + 1);
-
-    // Create a square using the grass
-    sf::RectangleShape rectangle(sf::Vector2f(50, 50));
-    rectangle.setTexture(&texture);
-
-    // Create grid lines
-    sf::RectangleShape vLine(sf::Vector2f(2, 510)); // vertical
-    sf::RectangleShape hLine(sf::Vector2f(510, 2)); // horizontal
-    vLine.setFillColor(sf::Color::White);
-    hLine.setFillColor(sf::Color::White);
 
     /////////////////////////////
     // Logic for button inputs //
@@ -216,59 +170,51 @@ int main()
                 break;
 
             case sf::Event::MouseButtonPressed:
+            {
                 if (isWithinWaterRefillArea(event.mouseButton.x, event.mouseButton.y))
                 {
                     wateringCanTextureIndex = 0;
                     wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
                     wateringCanClicks = 0;
                 }
+
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    int x = event.mouseButton.x / (tileSize);
-                    int y = (event.mouseButton.y - 52) / (tileSize);
-
-                    // Skip if the clicked tile is a border tile
-                    if (x == 0 || x == 11 || y == 0 || y == 11)
-                    {
-                        break;
-                    }
-
-                    // Get the tile position where the farmer is standing
                     sf::Vector2f pos = person.getPosition();
-                    int personTileX = static_cast<int>(pos.x) / (tileSize);
-                    int personTileY = static_cast<int>(pos.y - 52) / (tileSize);
+                    int personTileX = static_cast<int>(pos.x) / tileSize;
+                    int personTileY = static_cast<int>(pos.y - 52) / tileSize;
+
+                    sf::Vector2i clickedTile = myFarm.getClickedTile(event.mouseButton.x, event.mouseButton.y);
+                    int x = clickedTile.x;
+                    int y = clickedTile.y;
 
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
                     {
-                        // Only allow clicking the ground to change the texture if the first inventory spot is selected
-                        if (selectedInventoryIndex == 0 && tiles[x][y].getTexture() != &wetSoilTexture)
+                        if (selectedInventoryIndex == 0 && myFarm.getTileTexture(x, y) != myFarm.getWetSoilTexture())
                         {
-                            tiles[x][y].setTexture(&soilTexture);
+                            myFarm.setTileTexture(x, y, myFarm.getSoilTexture());
                         }
 
-                        if (selectedInventoryIndex == 1)
+                        if (selectedInventoryIndex == 1 && wateringCanTextureIndex != 4)
                         {
-                            // Only allow the tile to be watered if the watering can is not empty
-                            if (wateringCanTextureIndex != 4)
+                            if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture())
                             {
-                                if (tiles[x][y].getTexture() == &soilTexture)
+                                myFarm.setTileTexture(x, y, myFarm.getWetSoilTexture());
+                                wateringCanClicks++;
+                                if (wateringCanClicks >= 6)
                                 {
-                                    tiles[x][y].setTexture(&wetSoilTexture);
-                                    wateringCanClicks++;
-                                    if (wateringCanClicks >= 6)
-                                    {
-                                        wateringCanClicks = 0;
-                                        wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
-                                        wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
-                                    }
+                                    wateringCanClicks = 0;
+                                    wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
+                                    wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                break;
+            break;
 
             case sf::Event::KeyPressed:
             {
@@ -350,13 +296,7 @@ int main()
         // Drawing the graphics //
         //////////////////////////
 
-        for (int i = 0; i < 12; ++i)
-        {
-            for (int j = 0; j < 12; ++j)
-            {
-                window.draw(tiles[i][j]);
-            }
-        }
+        myFarm.draw(window);
 
         for (int i = 0; i < 13; ++i)
         {
