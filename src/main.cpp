@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Person.h"
 #include "Farm.h"
+#include "Inventory.h"
 
 int main()
 {
@@ -12,18 +13,13 @@ int main()
     // Create the window
 
     Farm myFarm;
+    Inventory myInventory;
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
     // Load textures
 
     sf::Texture pathTexture;
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
-    {
-        return -1;
-    }
-
-    sf::Texture inventoryTexture;
-    if (!inventoryTexture.loadFromFile("src/assets/inventory.jpeg"))
     {
         return -1;
     }
@@ -101,48 +97,8 @@ int main()
         }
     }
 
-    sf::Texture inventoryBackgroundTexture;
-    if (!inventoryBackgroundTexture.loadFromFile("src/assets/inventory-background.jpeg"))
-    {
-        return -1;
-    }
-
-    int inventoryBackgroundStartY = 657;
-    int inventoryBackgroundTileSize = 50;
-
-    int selectedInventoryIndex = -1;
-
-    sf::RectangleShape inventoryBackgroundTiles[13][2];
-
-    for (int i = 0; i < 13; ++i)
-    {
-        for (int j = 0; j < 2; ++j)
-        {
-            inventoryBackgroundTiles[i][j].setSize(sf::Vector2f(inventoryBackgroundTileSize, inventoryBackgroundTileSize));
-            inventoryBackgroundTiles[i][j].setPosition(i * inventoryBackgroundTileSize, inventoryBackgroundStartY + j * inventoryBackgroundTileSize); // No extra pixels
-            inventoryBackgroundTiles[i][j].setTexture(&inventoryBackgroundTexture);
-        }
-    }
-
     // Define tile size
     int tileSize = 50;
-
-    int inventorySize = 10;
-    sf::RectangleShape inventory[inventorySize];
-    int inventoryTileSize = 50;
-    // Manually set the starting X position
-    int startX = 42;
-    int startY = 625;
-
-    // Initialise the inventory bar
-    for (int i = 0; i < 10; ++i)
-    {
-        inventory[i].setSize(sf::Vector2f(50, 50));
-        inventory[i].setPosition(startX + i * 52, startY + 52);
-        inventory[i].setTexture(&inventoryTexture);
-        inventory[i].setOutlineColor(sf::Color::Black);
-        inventory[i].setOutlineThickness(2);
-    }
 
     Person person("src/assets/person.png", tileSize);
     person.setPosition(52 + 1, 52 + 1);
@@ -191,12 +147,12 @@ int main()
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
                     {
-                        if (selectedInventoryIndex == 0 && myFarm.getTileTexture(x, y) != myFarm.getWetSoilTexture())
+                        if (myInventory.getSelectedInventoryIndex() == 0 && myFarm.getTileTexture(x, y) != myFarm.getWetSoilTexture())
                         {
                             myFarm.setTileTexture(x, y, myFarm.getSoilTexture());
                         }
 
-                        if (selectedInventoryIndex == 1 && wateringCanTextureIndex != 4)
+                        if (myInventory.getSelectedInventoryIndex() == 1 && wateringCanTextureIndex != 4)
                         {
                             if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture())
                             {
@@ -254,32 +210,7 @@ int main()
                 if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
                 {
                     int newSelection = event.key.code - sf::Keyboard::Num1;
-
-                    // Reset the previous selection's border to black if any
-                    if (selectedInventoryIndex != -1)
-                    {
-                        inventory[selectedInventoryIndex].setOutlineColor(sf::Color::Black);
-                    }
-
-                    // Update the new selection
-                    selectedInventoryIndex = newSelection;
-
-                    // Set the new selection's border to white
-                    inventory[selectedInventoryIndex].setOutlineColor(sf::Color::White);
-                }
-                else if (event.key.code == sf::Keyboard::Num0)
-                {
-                    // Reset the previous selection's border to black if any
-                    if (selectedInventoryIndex != -1)
-                    {
-                        inventory[selectedInventoryIndex].setOutlineColor(sf::Color::Black);
-                    }
-
-                    // Update the new selection to the last slot
-                    selectedInventoryIndex = inventorySize - 1;
-
-                    // Set the new selection's border to white
-                    inventory[selectedInventoryIndex].setOutlineColor(sf::Color::White);
+                    myInventory.setSelection(newSelection);
                 }
             }
             break;
@@ -298,28 +229,11 @@ int main()
 
         myFarm.draw(window);
 
-        for (int i = 0; i < 13; ++i)
-        {
-            for (int j = 0; j < 2; ++j)
-            {
-                window.draw(inventoryBackgroundTiles[i][j]);
-            }
-        }
+        myInventory.draw(window);
 
         for (int i = 0; i < 12; ++i)
         {
             window.draw(waterTiles[i]);
-        }
-
-        for (int i = 0; i < 10; ++i)
-        {
-            window.draw(inventory[i]);
-        }
-
-        // Redraw the selected inventory item to bring its border to the top
-        if (selectedInventoryIndex != -1)
-        {
-            window.draw(inventory[selectedInventoryIndex]);
         }
 
         window.draw(wateringCanIcon);
