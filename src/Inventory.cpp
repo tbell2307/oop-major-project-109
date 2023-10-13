@@ -1,7 +1,7 @@
 #include "Inventory.h"
 
 Inventory::Inventory()
-    : selectedInventoryIndex(-1) // Initialize selectedInventoryIndex here
+    : selectedInventoryIndex(-1)
 {
     // Load textures
     if (!inventoryTexture.loadFromFile("src/assets/inventory.jpeg") ||
@@ -25,7 +25,7 @@ Inventory::Inventory()
 
     int inventorySize = 10;
     int inventoryTileSize = 50;
-    // Manually set the starting X position
+
     int startX = 42;
     int startY = 625;
 
@@ -68,7 +68,7 @@ void Inventory::setSelection(int index)
 {
     if (index < 0 || index >= 10)
     {
-        return; // Invalid index
+        return;
     }
 
     // Reset previous selection border color

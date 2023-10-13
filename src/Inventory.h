@@ -19,4 +19,4 @@ private:
     int selectedInventoryIndex;
 };
 
-#endif // INVENTORY_H
+#endif
