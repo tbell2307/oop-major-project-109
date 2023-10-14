@@ -4,6 +4,7 @@
 #include "Farm.h"
 #include "Inventory.h"
 #include "Weather.h"
+#include "Time.h"
 
 int main()
 {
@@ -16,6 +17,7 @@ int main()
     Farm myFarm;
     Inventory myInventory;
     Weather myWeather;
+    Time myTime;
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
     // Load textures
@@ -100,7 +102,7 @@ int main()
         {
             waterTiles[i].setTexture(&waterTexture);
         }
-        else if (i == 8 || i == 9 || i == 10)
+        else if (i == 6 || i == 7 || i == 8)
         {
             waterTiles[i].setTexture(&houseTexture);
         }
@@ -159,6 +161,11 @@ int main()
                             wateringCanTextureIndex = 0;
                             wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
                             wateringCanClicks = 0;
+                        }
+                        if (event.mouseButton.x > 300 && event.mouseButton.x < 450 && event.mouseButton.y < 60)
+                        {
+                            myTime.passDay();
+                            std::cout << "Current Day: " << myTime.getCurrentDay() << std::endl;
                         }
                         if (event.mouseButton.y > 60 && event.mouseButton.y < 640)
                         {
