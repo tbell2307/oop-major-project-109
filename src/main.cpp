@@ -5,6 +5,8 @@
 #include "Inventory.h"
 #include "Weather.h"
 #include "Time.h"
+#include "Parsnip.h"
+#include <vector>
 
 int main()
 {
@@ -18,6 +20,8 @@ int main()
     Inventory myInventory;
     Weather myWeather;
     Time myTime;
+    Parsnip myParsnip;
+
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
     // Load textures
@@ -33,6 +37,8 @@ int main()
 
     myWeather.setCurrentWeather(0);
 
+    std::vector<Parsnip> parsnipList;
+
     sf::Texture pathTexture;
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
     {
@@ -43,6 +49,12 @@ int main()
     if (!font.loadFromFile("src/assets/font.ttf"))
     {
         return -1;
+    }
+
+    if (!Parsnip::textureGrowing.loadFromFile("src/assets/seeds.png") ||
+        !Parsnip::textureMature.loadFromFile("src/assets/parsnip0.png"))
+    {
+        // Handle the error
     }
 
     sf::Text timeText;
@@ -86,6 +98,23 @@ int main()
     {
         return -1;
     }
+
+    sf::Texture parsnip1Texture;
+    if (!parsnip1Texture.loadFromFile("src/assets/parsnip1.png"))
+    {
+        return -1;
+    }
+
+    sf::Sprite parsnip1Icon;
+    parsnip1Icon.setTexture(parsnip1Texture);
+
+    sf::Vector2u textureSizeParsnip = parsnip1Texture.getSize();
+    float scaleXparsnip = static_cast<float>(50) / static_cast<float>(textureSizeParsnip.x);
+    float scaleYparsnip = static_cast<float>(50) / static_cast<float>(textureSizeParsnip.y);
+    parsnip1Icon.setScale(scaleXparsnip, scaleYparsnip);
+
+    // Position it on the third inventory slot, assuming inventory slots are 50 pixels apart
+    parsnip1Icon.setPosition(147, 677);
 
     sf::Sprite hoeIcon;
     hoeIcon.setTexture(hoeIconTexture);
@@ -163,7 +192,7 @@ int main()
     while (window.isOpen())
     {
         timeText.setString("Day: " + std::to_string(myTime.getCurrentDay()));
-        seasonText.setString("Summer");
+        seasonText.setString("Spring");
         auto isWithinWaterRefillArea = [&](int mouseX, int mouseY) -> bool
         {
             // Logic to determine if the click is within the water refill area (top three tiles)
@@ -226,6 +255,16 @@ int main()
                                         wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
                                         wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
                                     }
+                                }
+                            }
+                            if (myInventory.getSelectedInventoryIndex() == 2)
+                            {
+                                if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture() ||
+                                    myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
+                                {
+                                    Parsnip newParsnip;
+                                    newParsnip.plant(x * tileSize, y * tileSize + 52); // Adjust coordinates if needed
+                                    parsnipList.push_back(newParsnip);
                                 }
                             }
                         }
@@ -308,6 +347,13 @@ int main()
         window.draw(seasonText);
 
         window.draw(hoeIcon);
+
+        for (auto &parsnip : parsnipList)
+        {
+            parsnip.draw(window);
+        }
+
+        window.draw(parsnip1Icon);
 
         window.draw(person.getSprite());
 
