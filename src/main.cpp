@@ -3,6 +3,7 @@
 #include "Person.h"
 #include "Farm.h"
 #include "Inventory.h"
+#include "Weather.h"
 
 int main()
 {
@@ -14,9 +15,21 @@ int main()
 
     Farm myFarm;
     Inventory myInventory;
+    Weather myWeather;
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
     // Load textures
+    std::vector<std::string> weatherFiles = {
+        "src/assets/weather1.png"};
+
+    if (!myWeather.loadTextures(weatherFiles))
+    {
+        return -1;
+    }
+
+    myWeather.setPosition(550, 0);
+
+    myWeather.setCurrentWeather(0);
 
     sf::Texture pathTexture;
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
@@ -238,6 +251,8 @@ int main()
         {
             window.draw(waterTiles[i]);
         }
+
+        window.draw(myWeather.getSprite());
 
         window.draw(wateringCanIcon);
 

@@ -13,6 +13,7 @@
         "src/Person.cpp",
         "src/Farm.cpp",
         "src/Inventory.cpp",
+        "src/Weather.cpp",
         "-I/opt/homebrew/Cellar/sfml/2.6.0/include",
         "-L/opt/homebrew/Cellar/sfml/2.6.0/lib",
         "-lsfml-graphics",
