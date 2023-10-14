@@ -127,12 +127,6 @@ int main()
 
             case sf::Event::MouseButtonPressed:
             {
-                if (isWithinWaterRefillArea(event.mouseButton.x, event.mouseButton.y))
-                {
-                    wateringCanTextureIndex = 0;
-                    wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
-                    wateringCanClicks = 0;
-                }
 
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
@@ -145,24 +139,33 @@ int main()
                     int y = clickedTile.y;
 
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
-                    if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1 && event.mouseButton.y < 612)
+                    if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1)
                     {
-                        if (myInventory.getSelectedInventoryIndex() == 0 && myFarm.getTileTexture(x, y) != myFarm.getWetSoilTexture())
+                        if (isWithinWaterRefillArea(event.mouseButton.x, event.mouseButton.y))
                         {
-                            myFarm.setTileTexture(x, y, myFarm.getSoilTexture());
+                            wateringCanTextureIndex = 0;
+                            wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
+                            wateringCanClicks = 0;
                         }
-
-                        if (myInventory.getSelectedInventoryIndex() == 1 && wateringCanTextureIndex != 4)
+                        if (event.mouseButton.y > 60 && event.mouseButton.y < 640)
                         {
-                            if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture())
+                            if (myInventory.getSelectedInventoryIndex() == 0 && myFarm.getTileTexture(x, y) != myFarm.getWetSoilTexture())
                             {
-                                myFarm.setTileTexture(x, y, myFarm.getWetSoilTexture());
-                                wateringCanClicks++;
-                                if (wateringCanClicks >= 6)
+                                myFarm.setTileTexture(x, y, myFarm.getSoilTexture());
+                            }
+
+                            if (myInventory.getSelectedInventoryIndex() == 1 && wateringCanTextureIndex != 4)
+                            {
+                                if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture())
                                 {
-                                    wateringCanClicks = 0;
-                                    wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
-                                    wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
+                                    myFarm.setTileTexture(x, y, myFarm.getWetSoilTexture());
+                                    wateringCanClicks++;
+                                    if (wateringCanClicks >= 6)
+                                    {
+                                        wateringCanClicks = 0;
+                                        wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
+                                        wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
+                                    }
                                 }
                             }
                         }
