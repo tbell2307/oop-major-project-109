@@ -39,6 +39,24 @@ int main()
         return -1;
     }
 
+    sf::Font font;
+    if (!font.loadFromFile("src/assets/font.ttf"))
+    {
+        return -1;
+    }
+
+    sf::Text timeText;
+    timeText.setFont(font);
+    timeText.setCharacterSize(18);
+    timeText.setFillColor(sf::Color::White);
+    timeText.setPosition(476, 5);
+
+    sf::Text seasonText;
+    seasonText.setFont(font);
+    seasonText.setCharacterSize(12);
+    seasonText.setFillColor(sf::Color::White);
+    seasonText.setPosition(476, 26);
+
     sf::Texture waterTexture;
     if (!waterTexture.loadFromFile("src/assets/water.jpeg"))
     {
@@ -47,6 +65,18 @@ int main()
 
     sf::Texture houseTexture;
     if (!houseTexture.loadFromFile("src/assets/house.png"))
+    {
+        return -1;
+    }
+
+    sf::Texture lTimeTexture;
+    if (!lTimeTexture.loadFromFile("src/assets/time-left.png"))
+    {
+        return -1;
+    }
+
+    sf::Texture rTimeTexture;
+    if (!rTimeTexture.loadFromFile("src/assets/time-right.png"))
     {
         return -1;
     }
@@ -106,6 +136,14 @@ int main()
         {
             waterTiles[i].setTexture(&houseTexture);
         }
+        else if (i == 9)
+        {
+            waterTiles[i].setTexture(&lTimeTexture);
+        }
+        else if (i == 10)
+        {
+            waterTiles[i].setTexture(&rTimeTexture);
+        }
         else
         {
             waterTiles[i].setTexture(&pathTexture);
@@ -124,6 +162,8 @@ int main()
 
     while (window.isOpen())
     {
+        timeText.setString("Day: " + std::to_string(myTime.getCurrentDay()));
+        seasonText.setString("Summer");
         auto isWithinWaterRefillArea = [&](int mouseX, int mouseY) -> bool
         {
             // Logic to determine if the click is within the water refill area (top three tiles)
@@ -262,6 +302,10 @@ int main()
         window.draw(myWeather.getSprite());
 
         window.draw(wateringCanIcon);
+
+        window.draw(timeText);
+
+        window.draw(seasonText);
 
         window.draw(hoeIcon);
 
