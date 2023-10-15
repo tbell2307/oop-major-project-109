@@ -1,50 +1,40 @@
 # Compiler and flags
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall
+CXXFLAGS := -std=c++17 -lstdc++fs -Wall -Wextra
 
 # Directories
 SRC_DIR := src
+OBJ_DIR := obj
 INC_DIR := inc
-LIBS_DIR := libs
-BUILD_DIR := build
-BIN_DIR := bin
+LIB_DIR := libs
 
-# External libraries (assuming they are git submodules)
-# You may need to adjust the library names and paths
-# EXTERNAL_LIBS := $(LIBS_DIR)/external_lib1
+# Executable name
+TARGET := my_program
 
-# Source files
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
-
-# Object files
-OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
+# Source files (replace <your_source_files> with actual source files)
+SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
 # Include directories
-INC := -I$(INC_DIR)
+INC_FLAGS := -I$(INC_DIR) -I$(LIB_DIR)/nlohmann/single_include -I$(LIB_DIR)/fmt/include -I$(LIB_DIR)/SFML/include
 
-# Linker flags
-LDFLAGS := $(foreach lib, $(EXTERNAL_LIBS), -L$(lib)/lib -Wl,-rpath,$(lib)/lib)
-# LDLIBS := -lmy_external_lib
 
-# Output binary
-TARGET := $(BIN_DIR)/my_program
+# Libraries
+LIBS := -lsfml-graphics -lsfml-window -lsfml-system
 
-# Default target
-all: $(TARGET)
+# Build rule
+$(TARGET): $(OBJ_FILES)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-$(TARGET): $(OBJS) | $(BIN_DIR)
-	$(CXX) $(LDFLAGS) $(OBJS) -o $@ $(LDLIBS)
+# Compilation rule
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(INC_FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
+# Ensure the obj directory exists
+$(shell mkdir -p $(OBJ_DIR))
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
-$(BIN_DIR):
-	mkdir -p $(BIN_DIR)
+.PHONY: clean
 
 clean:
-	rm -rf $(BUILD_DIR) $(BIN_DIR)
-
-.PHONY: all clean
+	$(RM) -r $(OBJ_DIR)
+	$(RM) $(TARGET)
