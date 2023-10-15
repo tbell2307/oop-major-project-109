@@ -1,46 +1,53 @@
 //Eggplant.cpp
 #include "Eggplant.hpp"
 
-//default constructor
-Eggplant::Eggplant() {}
-
-//parameterised constructor
-Eggplant::Eggplant(std::string name, std::string harvest_season,int growing_time) : Crop(name, harvest_season, growing_time), m_sellprice(35.00), m_decay_time(9), m_seedprice(60.00) {}
+//constructor
+Eggplant::Eggplant() : m_name("Eggplant"), m_sellprice(60.00), m_seedprice(20.00), m_growing_time(5), m_decay_time(3) {}
 
 //destructor
 Eggplant::~Eggplant() {}
 
-//getter for sell price
-double Eggplant::getSellPrice(){
+//get the name
+std::string Eggplant::getName(){
+    return m_name;
+}
+
+//get the sell price
+double Eggplant::getSellPrice() {
     return m_sellprice;
 }
 
-//getter for seed price
-double Eggplant::getSeedPrice(){
+//get the seed price
+double Eggplant::getSeedPrice() {
     return m_seedprice;
 }
 
-//getter for decay time
-int Eggplant::getDecayTime(){
+//get the growing time
+int Eggplant::getGrowingTime() {
+    return m_growing_time;
+}
+
+//get the decay time
+int Eggplant::getDecayTime() {
     return m_decay_time;
 }
 
-//setter for x-coordinate
-void Eggplant::setX(int x){
+//set the X-coordinate
+void Eggplant::setX(int x) {
     X = x;
 }
 
-//getter for x-coordinate
-int Eggplant::getX(){
+//get the X-coordinate
+int Eggplant::getX() {
     return X;
 }
 
-//setter for y-coordinate
-void Eggplant::setY(int y){
+//set the Y-coordinate
+void Eggplant::setY(int y) {
     Y = y;
 }
 
-//getter for y-coordinate
-int Eggplant::getY(){
+//get the Y-coordinate
+int Eggplant::getY() {
     return Y;
 }

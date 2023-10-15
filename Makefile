@@ -1,32 +1,50 @@
 # Compiler and flags
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Iinc
+CXXFLAGS := -std=c++17 -Wall
 
 # Directories
 SRC_DIR := src
-BUILD_DIR := build
 INC_DIR := inc
+LIBS_DIR := libs
+BUILD_DIR := build
+BIN_DIR := bin
+
+# External libraries (assuming they are git submodules)
+# You may need to adjust the library names and paths
+# EXTERNAL_LIBS := $(LIBS_DIR)/external_lib1
 
 # Source files
 SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 
 # Object files
-OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
 
-# Target executable
-TARGET := Run_Farm
+# Include directories
+INC := -I$(INC_DIR)
 
-.PHONY: all clean
+# Linker flags
+LDFLAGS := $(foreach lib, $(EXTERNAL_LIBS), -L$(lib)/lib -Wl,-rpath,$(lib)/lib)
+# LDLIBS := -lmy_external_lib
 
-all: $(BUILD_DIR)/$(TARGET)
+# Output binary
+TARGET := $(BIN_DIR)/my_program
 
-$(BUILD_DIR)/$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+# Default target
+all: $(TARGET)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(TARGET): $(OBJS) | $(BIN_DIR)
+	$(CXX) $(LDFLAGS) $(OBJS) -o $@ $(LDLIBS)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
 
+.PHONY: all clean

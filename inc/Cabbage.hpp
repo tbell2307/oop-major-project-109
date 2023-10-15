@@ -1,10 +1,10 @@
-//Beetroot.hpp
-//(derived class for Beetroot crop)
+//Cabbage.hpp
+//(derived class for Cabbage crop)
 #pragma once
-#include "WinterCrop.hpp"
+#include "SummerCrop.hpp"
 #include <string>
 
-class Beetroot : public WinterCrop {
+class Cabbage : public SummerCrop {
 private:
     std::string m_name;
     double m_sellprice; //sell price 
@@ -15,8 +15,8 @@ private:
     int Y; //y-coordinate 
 public:
     //constructor and destructor
-    Beetroot(); 
-    virtual ~Beetroot(); 
+    Cabbage(); 
+    virtual ~Cabbage(); 
     //implement abstract methods from the base class
     std::string getName() override;
     double getSellPrice() override;

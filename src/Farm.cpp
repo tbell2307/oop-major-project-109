@@ -4,7 +4,7 @@
 
 //default constructor
 Farm::Farm()
-    : m_name("invalid name"), m_location("invalid location"), m_x_dim(3), m_y_dim(3), m_max_crops(m_x_dim * m_y_dim), m_current_crops(0) {
+    : m_x_dim(3), m_y_dim(3), m_max_crops(m_x_dim * m_y_dim), m_current_crops(0) {
     farmField = new Crop**[m_x_dim];
     for (int i = 0; i < m_x_dim; i++) {
         farmField[i] = new Crop*[m_y_dim];
@@ -15,8 +15,8 @@ Farm::Farm()
 }
 
 //parameterised constructor
-Farm::Farm(std::string name, std::string location, int x_dim, int y_dim)
-    : m_name(name), m_location(location), m_x_dim(x_dim), m_y_dim(y_dim), m_max_crops(x_dim * y_dim), m_current_crops(0) {
+Farm::Farm(int x_dim, int y_dim)
+    : m_x_dim(x_dim), m_y_dim(y_dim), m_max_crops(x_dim * y_dim), m_current_crops(0) {
     farmField = new Crop**[m_x_dim];
     for (int i = 0; i < m_x_dim; i++) {
         farmField[i] = new Crop*[m_y_dim];
@@ -29,16 +29,6 @@ Farm::Farm(std::string name, std::string location, int x_dim, int y_dim)
 //destructor
 Farm::~Farm() {
     delete[] farmField;
-}
-
-//getter for name
-std::string Farm::getName() {
-    return m_name;
-}
-
-//getter for location
-std::string Farm::getLocation() {
-    return m_location;
 }
 
 //getter for x_dim
@@ -84,13 +74,33 @@ bool Farm::addCrop(Crop* crop, int x, int y) {
     return false;
 }
 
+//harvest a crop in farmField
+bool Farm::harvestCrop(Crop* crop, Crop** harvestedCrops) {
+    for (int i = 0; i < m_x_dim; i++) {
+        for (int j = 0; j < m_y_dim; j++) {
+            if (farmField[i][j] == crop) {
+                for (int k = 0; k < getMaxCrops(); k++){
+                    if (harvestedCrops[k] == nullptr){
+                        harvestedCrops[k] = farmField[i][j];
+                        farmField[i][j] = nullptr;  // Set the field to nullptr after harvesting
+                        m_current_crops--;
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
 //remove a crop in farmField
 bool Farm::removeCrop(Crop* crop) {
     for (int i = 0; i < m_x_dim; i++) {
         for (int j = 0; j < m_y_dim; j++) {
             if (farmField[i][j] == crop) {
-                delete farmField[i][j];
                 farmField[i][j] = nullptr;
+                delete farmField[i][j];
                 m_current_crops--;
                 return true;
             }
@@ -100,23 +110,29 @@ bool Farm::removeCrop(Crop* crop) {
 }
 
 //print all information for a crop
-void Farm::getAllCropsInfo() {
+void Farm::getAllCropsInfo(){
     std::cout << "------------------------" << std::endl;
-    std::cout << "Crop data for " << getName() << "." << std::endl;
+    std::cout << "Crop data..." << std::endl;
+    std::string mature;
     if (m_current_crops > 0) {
         std::cout << "------------" << std::endl;
         for (int i = 0; i < m_x_dim; i++) {
             for (int j = 0; j < m_y_dim; j++) {
                 if (farmField[i][j] != nullptr) {
-                    std::cout << "Crop at location (" << i << ", " << j << ")..." << std::endl;
+                    std::cout << "Crop at (" << i << "," << j << ")..." << std::endl;
                     std::cout << "Name: " << farmField[i][j]->getName() << std::endl;
-                    std::cout << "Harvest season: " << farmField[i][j]->getHarvestSeason() << std::endl;
-                    std::cout << "Growing time: " << farmField[i][j]->getGrowingTime() << std::endl;
-                    std::cout << "Sell price: " << farmField[i][j]->getSellPrice() << std::endl;
-                    std::cout << "Seed price: " << farmField[i][j]->getSeedPrice() << std::endl;
-                    std::cout << "Decay time: " << farmField[i][j]->getDecayTime() << std::endl;
-                    std::cout << "X coordinate is: " << farmField[i][j]->getX() << std::endl;
-                    std::cout << "Y coordinate is: " << farmField[i][j]->getY() << std::endl;
+                    std::cout << "Season: " << farmField[i][j]->getSeason() << std::endl;
+                    std::cout << "Age: " << farmField[i][j]->getAge() << " days" << std::endl;
+                    if (farmField[i][j]->isMature() == true){
+                        mature = "True";
+                    } else {
+                        mature = "False";
+                    }
+                    std::cout << "Mature: " << mature << std::endl;
+                    std::cout << "Growing time: " << farmField[i][j]->getGrowingTime() << " days" << std::endl;
+                    std::cout << "Decay time: " << farmField[i][j]->getDecayTime() << " days" << std::endl;
+                    std::cout << "Sell price: " << farmField[i][j]->getSellPrice() << " coins" << std::endl;
+                    std::cout << "Seed price: " << farmField[i][j]->getSeedPrice() << " coins"<< std::endl;
                     std::cout << "------------" << std::endl;
                 }
             }
@@ -129,28 +145,65 @@ void Farm::getAllCropsInfo() {
 
 //print a map of farmField
 void Farm::visualizeFarmField() {
-    std::cout << "Visualizing your farm field..." << std::endl;
     for (int j = 0; j < m_y_dim; j++) {
         for (int i = 0; i < m_x_dim; i++) {
-            if (farmField[i][j] != nullptr) { //print a letter corresponding to the type of crop planted in that slot
+            if (farmField[i][j] != nullptr) {
                 if (farmField[i][j]->getName() == "Parsnip") {
-                    std::cout << "P ";
+                    if(farmField[i][j]->isMature() == true){
+                        std::cout << "P  ";
+                    } else {
+                        std::cout << "p" << farmField[i][j]->getAge() << " ";
+                    }
                 } else if (farmField[i][j]->getName() == "Kale") {
-                    std::cout << "K ";
-                } else if (farmField[i][j]->getName() == "Radish") {
-                    std::cout << "R ";
-                } else if (farmField[i][j]->getName() == "Wheat") {
-                    std::cout << "W ";
+                    if(farmField[i][j]->isMature() == true){
+                        std::cout << "K  ";
+                    } else {
+                        std::cout << "k" << farmField[i][j]->getAge() << " ";
+                    }
+                 } else if (farmField[i][j]->getName() == "Wheat") {
+                    if(farmField[i][j]->isMature() == true){
+                        std::cout << "W  ";
+                    } else {
+                        std::cout << "w" << farmField[i][j]->getAge() << " ";
+                    }
+                } else if (farmField[i][j]->getName() == "Cabbage") {
+                    if(farmField[i][j]->isMature() == true){
+                        std::cout << "C  ";
+                    } else {
+                        std::cout << "c" << farmField[i][j]->getAge() << " ";
+                    }
                 } else if (farmField[i][j]->getName() == "Eggplant") {
-                    std::cout << "E ";
+                    if(farmField[i][j]->isMature() == true){
+                        std::cout << "E  ";
+                    } else {
+                        std::cout << "e" << farmField[i][j]->getAge() << " ";
+                    }
+                } else if (farmField[i][j]->getName() == "Yam") {
+                    if(farmField[i][j]->isMature() == true){
+                        std::cout << "Y  ";
+                    } else {
+                        std::cout << "y" << farmField[i][j]->getAge() << " ";
+                    }
+                } else if (farmField[i][j]->getName() == "Rhubarb") {
+                    if(farmField[i][j]->isMature() == true){
+                        std::cout << "R  ";
+                    } else {
+                        std::cout << "r" << farmField[i][j]->getAge() << " ";
+                    }
                 } else if (farmField[i][j]->getName() == "Beetroot") {
-                    std::cout << "B ";
+                    if(farmField[i][j]->isMature() == true){
+                        std::cout << "B  ";
+                    } else {
+                        std::cout << "b" << farmField[i][j]->getAge() << " ";
+                    }
                 }
-            } else { //print a . to indicate an empty slot
-                std::cout << ". ";
+            } else {
+                std::cout << ".  ";
             }
         }
         std::cout << std::endl;
     }
 }
+
+
 

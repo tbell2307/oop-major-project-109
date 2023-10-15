@@ -1,29 +1,37 @@
-//Crop.hpp
+//Crop.hpp 
+//(abstract base class for all crops)
 #pragma once
 #include <string>
 
 class Crop {
 private:
-    std::string m_name; //name of the crop
-    std::string m_harvest_season; //season in which the crop can be harvested
-    int m_growing_time; //number of days the crop takes to grow from a seed to full maturity
-
+    int m_age; //age measured in days passed since the crop was planted
+    bool m_mature; //flag to track maturity
+    bool m_harvested; //flag to track if the crop is harvested
+    bool m_decayed;
 public:
     //constructors and destructor
-    Crop();
-    Crop(std::string name, std::string harvest_season, int growing_time);
-    ~Crop();
-    //getters and setters
-    std::string getName();
-    std::string getHarvestSeason();
-    void setHarvestSeason(std::string harvest_season);
-    int getGrowingTime();
-    //virtual functions
-    virtual double getSellPrice();
-    virtual double getSeedPrice();
-    virtual int getDecayTime();
-    virtual void setX(int x);
-    virtual int getX();
-    virtual void setY(int y);
-    virtual int getY();    
+    Crop(); 
+    virtual ~Crop(); 
+    //accessors
+    void incrementAge();
+    int getAge();
+    bool isMature(); 
+    void setMature(bool mature); 
+    bool isHarvested();
+    void setHarvested(bool harvested);
+    bool isDecayed();
+    void setDecayed(bool decayed);
+    //abstract methods to be implemented by derived classes
+    virtual std::string getName() = 0;
+    virtual std::string getSeason() = 0;
+    virtual double getSellPrice() = 0;
+    virtual double getSeedPrice() = 0;
+    virtual int getDecayTime() = 0;
+    virtual int getGrowingTime() = 0;
+    virtual void setX(int x) = 0;
+    virtual int getX() = 0;
+    virtual void setY(int y) = 0;
+    virtual int getY() = 0;
 };
+           

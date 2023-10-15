@@ -1,64 +1,44 @@
-//Crop.cpp
+//Crop.cpp 
 #include "Crop.hpp"
 
 //default constructor
-Crop::Crop() {}
-
-//parameterised constructor
-Crop::Crop(std::string name, std::string harvest_season, int growing_time) : m_growing_time(growing_time), m_name(name), m_harvest_season(harvest_season) {}
+Crop::Crop() : m_age(0), m_mature(false), m_harvested(false), m_decayed(false) {}
 
 //destructor
 Crop::~Crop() {}
 
-//getter for name
-std::string Crop::getName() {
-    return m_name;
+//increment the age 
+void Crop::incrementAge() {
+    m_age++;
 }
 
-//getter for harvest season
-std::string Crop::getHarvestSeason() {
-    return m_harvest_season;
+//get the age 
+int Crop::getAge() {
+    return m_age;
 }
 
-//setter for harvest season
-void Crop::setHarvestSeason(std::string harvest_season) {
-    m_harvest_season = harvest_season;
+//get the maturity 
+bool Crop::isMature(){
+    return m_mature;
 }
 
-//getter for growing time
-int Crop::getGrowingTime() {
-    return m_growing_time;
+//set the maturity 
+void Crop::setMature(bool mature){
+    m_mature = mature;
 }
 
-//virtual function - getter for sell price
-double Crop::getSellPrice(){
-    return 0;
+bool Crop::isHarvested(){
+    return m_harvested;
 }
 
-//virtual function - getter for seed price
-double Crop::getSeedPrice(){
-    return 0;
+void Crop::setHarvested(bool harvested){
+    m_harvested = harvested;
 }
 
-//virtual function - getter for decay time
-int Crop::getDecayTime(){
-    return 0;
+bool Crop::isDecayed(){
+    return m_decayed;
 }
 
-//virtual function - setter for the x-coordinate of the crop
-void Crop::setX(int x){
-}
-
-//virtual function - getter for the x-coordinate of the crop
-int Crop::getX(){
-    return 0;
-}
-
-//virtual function - setter for the y-coordinate of the crop
-void Crop::setY(int y){
-}
-
-//virtual function - getter for the y-coordinate of the crop
-int Crop::getY(){
-    return 0;
+void Crop::setDecayed(bool decayed){
+    m_decayed = decayed;
 }

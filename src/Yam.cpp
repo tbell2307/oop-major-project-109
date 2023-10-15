@@ -1,53 +1,53 @@
-//Kale.cpp
-#include "Kale.hpp"
+//Yam.cpp
+#include "Yam.hpp"
 
 //constructor
-Kale::Kale() : m_name("Kale"), m_sellprice(110.00), m_seedprice(70.00), m_growing_time(6), m_decay_time(3) {}
+Yam::Yam() : m_name("Yam"), m_sellprice(160.00), m_seedprice(60.00), m_growing_time(10), m_decay_time(5) {}
 
 //destructor
-Kale::~Kale() {}
+Yam::~Yam() {}
 
 //get the name
-std::string Kale::getName(){
+std::string Yam::getName(){
     return m_name;
 }
 
 //get the sell price
-double Kale::getSellPrice() {
+double Yam::getSellPrice() {
     return m_sellprice;
 }
 
 //get the seed price
-double Kale::getSeedPrice() {
+double Yam::getSeedPrice() {
     return m_seedprice;
 }
 
 //get the growing time
-int Kale::getGrowingTime() {
+int Yam::getGrowingTime() {
     return m_growing_time;
 }
 
 //get the decay time
-int Kale::getDecayTime() {
+int Yam::getDecayTime() {
     return m_decay_time;
 }
 
 //set the X-coordinate
-void Kale::setX(int x) {
+void Yam::setX(int x) {
     X = x;
 }
 
 //get the X-coordinate
-int Kale::getX() {
+int Yam::getX() {
     return X;
 }
 
 //set the Y-coordinate
-void Kale::setY(int y) {
+void Yam::setY(int y) {
     Y = y;
 }
 
 //get the Y-coordinate
-int Kale::getY() {
+int Yam::getY() {
     return Y;
 }

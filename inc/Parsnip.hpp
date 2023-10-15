@@ -1,26 +1,30 @@
 //Parsnip.hpp
+//(derived class for Parsnip crop)
 #pragma once
-#include "Crop.hpp"
+#include "SpringCrop.hpp"
+#include <string>
 
-class Parsnip : public Crop {
+class Parsnip : public SpringCrop {
 private:
-    double m_sellprice; //nusmber of coins the crop will sell for
-    double m_seedprice; //number of coins the seed costs to buy
-    int m_decay_time; //number of days passed after the crop matures before it decays
-    int X; //x-coordinate of the crop
-    int Y; //y-coordinate of the crop
+    std::string m_name;
+    double m_sellprice; //sell price 
+    double m_seedprice; //seed price 
+    int m_growing_time; //growing time 
+    int m_decay_time; //decay time 
+    int X; //x-coordinate 
+    int Y; //y-coordinate 
 public:
-    //constructors and destructor
-    Parsnip();
-    Parsnip(std::string name,std::string harvest_season,int growing_time);
-    ~Parsnip();
-    //getters and setters
-    double getSellPrice();
-    double getSeedPrice();
-    int getDecayTime();
-    void setX(int x);
-    int getX();
-    void setY(int y);
-    int getY();
+    //constructor and destructor
+    Parsnip(); 
+    virtual ~Parsnip(); 
+    //implement abstract methods from the base class
+    std::string getName() override;
+    double getSellPrice() override;
+    double getSeedPrice() override;
+    int getGrowingTime() override;
+    int getDecayTime() override;
+    void setX(int x) override;
+    int getX() override;
+    void setY(int y) override;
+    int getY() override;
 };
-
