@@ -7,3 +7,6 @@
 [submodule "libs/nlohmann"]
 	path = libs/nlohmann
 	url = https://github.com/nlohmann/json.git
+[submodule "libs/SFML"]
+	path = libs/SFML
+	url = https://github.com/SFML/SFML.git
