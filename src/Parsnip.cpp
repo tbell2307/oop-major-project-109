@@ -4,7 +4,7 @@
 sf::Texture Parsnip::textureGrowing;
 sf::Texture Parsnip::textureMature;
 
-Parsnip::Parsnip() : SeasonalCrop("Spring")
+Parsnip::Parsnip() : SeasonalCrop("Spring"), daysSincePlanted(0), timesWatered(0), mature(false)
 {
     // Load the textures if they have not been loaded yet
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
@@ -37,9 +37,23 @@ Parsnip::~Parsnip()
 
 void Parsnip::grow()
 {
-    std::cout << "Parsnip is growing with Spring-specific logic" << std::endl;
-    // Here, you would change the state of the parsnip, if necessary
-    sprite.setTexture(textureGrowing);
+    ++daysSincePlanted;
+
+    if (daysSincePlanted >= 4 && timesWatered >= 4 && !mature)
+    {
+        std::cout << "Parsnip has matured!" << std::endl;
+        sprite.setTexture(textureMature);
+        mature = true;
+    }
+}
+
+void Parsnip::water()
+{
+    if (daysSincePlanted < 4 && !mature) // Only allow watering within the first 4 days and if not yet mature
+    {
+        ++timesWatered;
+        std::cout << "Parsnip has been watered " << timesWatered << " times." << std::endl;
+    }
 }
 
 void Parsnip::plant(int x, int y)

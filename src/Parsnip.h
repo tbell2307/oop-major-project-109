@@ -9,17 +9,20 @@ class Parsnip : public SeasonalCrop
 public:
     Parsnip();
     ~Parsnip();
-
+    void grow();
+    void water();
+    void plant(int x, int y);
+    sf::Vector2f getPosition() const;
+    void harvest();
+    void draw(sf::RenderWindow &window);
+    bool isMature() const { return mature; }
     static sf::Texture textureGrowing;
     static sf::Texture textureMature;
 
-    void grow() override;
-    void harvest() override;
-    void draw(sf::RenderWindow &window);
-    void plant(int x, int y);
-    sf::Vector2f getPosition() const;
-
 private:
+    int daysSincePlanted;
+    int timesWatered;
+    bool mature;
     sf::Sprite sprite;
 };
 

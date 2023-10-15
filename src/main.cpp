@@ -235,6 +235,20 @@ int main()
                         {
                             myTime.passDay();
                             std::cout << "Current Day: " << myTime.getCurrentDay() << std::endl;
+                            for (int x = 0; x < 12; ++x)
+                            {
+                                for (int y = 0; y < 12; ++y)
+                                {
+                                    if (myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
+                                    {
+                                        myFarm.setTileTexture(x, y, myFarm.getSoilTexture());
+                                    }
+                                }
+                            }
+                            for (auto &parsnip : parsnipList)
+                            {
+                                parsnip.grow();
+                            }
                         }
                         if (event.mouseButton.y > 60 && event.mouseButton.y < 640)
                         {
@@ -249,6 +263,14 @@ int main()
                                 {
                                     myFarm.setTileTexture(x, y, myFarm.getWetSoilTexture());
                                     wateringCanClicks++;
+                                    // Find the parsnip at this location and water it
+                                    for (auto &parsnip : parsnipList)
+                                    {
+                                        if (parsnip.getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52))
+                                        {
+                                            parsnip.water();
+                                        }
+                                    }
                                     if (wateringCanClicks >= 6)
                                     {
                                         wateringCanClicks = 0;
