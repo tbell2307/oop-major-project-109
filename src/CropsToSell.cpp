@@ -1,21 +1,36 @@
 #include "CropsToSell.h"
 #include <iostream>
 
-void CropsToSell::addParsnip(Parsnip p)
+void CropsToSell::addCrop(Crop *p)
 {
-    harvestedParsnips.push_back(p);
-    totalHarvested++;
-    std::cout << "Total parsnips harvested: " << totalHarvested << std::endl;
+    std::string type = p->getType(); // Assuming your Crop class has a getType() method
+    harvestedCrops[type].push_back(p);
+    std::cout << "Total " << type << " harvested: " << harvestedCrops[type].size() << std::endl;
 }
 
-void CropsToSell::showHarvestedParsnips()
+void CropsToSell::showHarvestedCrops()
 {
-    for (auto &parsnip : harvestedParsnips)
+    for (const auto &[type, crops] : harvestedCrops)
     {
+        std::cout << "Type: " << type << ", Count: " << crops.size() << std::endl;
     }
 }
 
 int CropsToSell::getTotalHarvested() const
 {
-    return totalHarvested;
+    int total = 0;
+    for (const auto &[type, crops] : harvestedCrops)
+    {
+        total += crops.size();
+    }
+    return total;
+}
+
+int CropsToSell::getTotalHarvestedOfType(const std::string &type) const
+{
+    if (harvestedCrops.find(type) != harvestedCrops.end())
+    {
+        return harvestedCrops.at(type).size();
+    }
+    return 0;
 }

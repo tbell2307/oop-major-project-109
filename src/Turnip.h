@@ -1,14 +1,14 @@
-#ifndef PARSNIP_H
-#define PARSNIP_H
+#ifndef TURNIP_H
+#define TURNIP_H
 
 #include <SFML/Graphics.hpp>
 #include "SeasonalCrop.h"
 
-class Parsnip : public SeasonalCrop
+class Turnip : public SeasonalCrop
 {
 public:
-    Parsnip();
-    ~Parsnip();
+    Turnip();
+    ~Turnip();
     void grow() override;
     void water();
     void plant(int x, int y, bool isTileWet);
@@ -20,7 +20,7 @@ public:
     static sf::Texture textureMature;
     std::string getType() const override
     {
-        return "Parsnip";
+        return "Turnip";
     }
 
 private:
