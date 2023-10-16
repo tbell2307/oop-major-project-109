@@ -6,6 +6,8 @@
 #include "Weather.h"
 #include "Time.h"
 #include "Parsnip.h"
+#include "CropsToSell.h"
+
 #include <vector>
 
 int main()
@@ -21,6 +23,7 @@ int main()
     Weather myWeather;
     Time myTime;
     Parsnip myParsnip;
+    CropsToSell myCropsToSell;
 
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
@@ -225,6 +228,20 @@ int main()
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1)
                     {
+                        // Loop through parsnips to find if any are mature and can be harvested.
+                        for (auto it = parsnipList.begin(); it != parsnipList.end();)
+                        {
+                            if (it->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52) && it->isMature())
+                            {
+                                myCropsToSell.addParsnip(*it); // Add mature parsnip to crops to sell
+                                it = parsnipList.erase(it);    // Remove harvested parsnip from the list
+                            }
+                            else
+                            {
+                                ++it;
+                            }
+                        }
+
                         if (isWithinWaterRefillArea(event.mouseButton.x, event.mouseButton.y))
                         {
                             wateringCanTextureIndex = 0;

@@ -18,6 +18,7 @@
         "src/Crop.cpp",
         "src/SeasonalCrop.cpp",
         "src/Parsnip.cpp",
+        "src/CropsToSell.cpp",
         "-I/opt/homebrew/Cellar/sfml/2.6.0/include",
         "-L/opt/homebrew/Cellar/sfml/2.6.0/lib",
         "-lsfml-graphics",
