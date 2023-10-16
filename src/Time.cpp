@@ -1,12 +1,21 @@
 #include "Time.h"
 
-Time::Time() : currentDay(1) {}
+Time::Time() : currentDay(1), currentSeasonIndex(0) {}
 
 void Time::passDay()
 {
     currentDay++;
+    if (currentDay > 28)
+    {
+        currentDay = 1;
+        currentSeasonIndex = (currentSeasonIndex + 1) % seasons.size();
+    }
 }
 
+std::string Time::getCurrentSeason() const
+{
+    return seasons[currentSeasonIndex];
+}
 int Time::getCurrentDay() const
 {
     return currentDay;

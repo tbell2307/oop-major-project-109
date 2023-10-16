@@ -192,7 +192,7 @@ int main()
     while (window.isOpen())
     {
         timeText.setString("Day: " + std::to_string(myTime.getCurrentDay()));
-        seasonText.setString("Spring");
+        seasonText.setString(myTime.getCurrentSeason());
         auto isWithinWaterRefillArea = [&](int mouseX, int mouseY) -> bool
         {
             // Logic to determine if the click is within the water refill area (top three tiles)
