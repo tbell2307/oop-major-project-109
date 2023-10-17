@@ -8,18 +8,18 @@
 class SeasonalCrop : public Crop
 {
 public:
-    SeasonalCrop(const std::string &preferredSeason);
+    SeasonalCrop(const std::string &preferredSeason, int requiredWaterings);
     virtual ~SeasonalCrop();
     virtual void grow() override;
-    virtual void water();
-    virtual void plant(int x, int y, bool isTileWet);
+    virtual void water() override;
+    virtual void plant(int x, int y, bool isTileWet) override;
     virtual void harvest() override;
+    virtual int getRequiredWaterings() const override;
 
 protected:
     std::string preferredSeason;
     int daysSincePlanted;
     int timesWatered;
-    bool mature;
     int requiredWaterings;
     sf::Sprite sprite;
     sf::Texture textureGrowing;

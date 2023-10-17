@@ -4,9 +4,8 @@
 sf::Texture Parsnip::textureGrowing;
 sf::Texture Parsnip::textureMature;
 
-Parsnip::Parsnip() : SeasonalCrop("Spring")
+Parsnip::Parsnip() : SeasonalCrop("Spring", 4)
 {
-    requiredWaterings = 4;
 
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
     {
@@ -37,37 +36,6 @@ Parsnip::~Parsnip()
 {
 }
 
-void Parsnip::grow()
-{
-    ++daysSincePlanted;
-
-    if (timesWatered >= 4 && !mature)
-    {
-        std::cout << "Parsnip has matured!" << std::endl;
-        sprite.setTexture(textureMature);
-        mature = true;
-    }
-}
-
-void Parsnip::water()
-{
-    if (!mature)
-    {
-        ++timesWatered;
-        std::cout << "Parsnip has been watered " << timesWatered << " times." << std::endl;
-    }
-}
-
-void Parsnip::plant(int x, int y, bool isTileWet)
-{
-    sprite.setPosition(x, y);
-    sprite.setTexture(textureGrowing);
-    if (isTileWet)
-    {
-        timesWatered = 1; // Initialize to 1 if the tile is already wet
-    }
-}
-
 sf::Vector2f Parsnip::getPosition() const
 {
     return sprite.getPosition();
@@ -80,5 +48,14 @@ void Parsnip::harvest()
 
 void Parsnip::draw(sf::RenderWindow &window)
 {
+    if (isMature())
+    {
+        sprite.setTexture(textureMature);
+    }
+    else
+    {
+        sprite.setTexture(textureGrowing);
+    }
+
     window.draw(sprite);
 }

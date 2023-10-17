@@ -43,8 +43,8 @@ int main()
 
     myWeather.setCurrentWeather(0);
 
-    std::vector<Parsnip> parsnipList;
-    std::vector<Turnip> turnipList;
+    std::list<std::unique_ptr<Crop>> cropList;
+    ;
 
     sf::Texture pathTexture;
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
@@ -60,12 +60,6 @@ int main()
 
     if (!Parsnip::textureGrowing.loadFromFile("src/assets/seeds.png") ||
         !Parsnip::textureMature.loadFromFile("src/assets/parsnip0.png"))
-    {
-        return -1;
-    }
-
-    if (!Turnip::textureGrowing.loadFromFile("src/assets/seeds.png") ||
-        !Turnip::textureMature.loadFromFile("src/assets/turnip0.png"))
     {
         return -1;
     }
@@ -263,12 +257,15 @@ int main()
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1)
                     {
                         // Loop through parsnips to find if any are mature and can be harvested.
-                        for (auto it = parsnipList.begin(); it != parsnipList.end();)
+                        for (auto it = cropList.begin(); it != cropList.end();)
                         {
-                            if (it->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52) && it->isMature())
+                            if ((*it)->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52) && (*it)->isMature())
                             {
-                                myCropsToSell.addCrop(&(*it)); // Add mature parsnip to crops to sell
-                                it = parsnipList.erase(it);    // Remove harvested parsnip from the list
+                                myCropsToSell.addCrop(it->get()); // assuming addCrop takes a Crop pointer
+                                it = cropList.erase(it);
+
+                                // Reset the tile's texture to normal soil
+                                myFarm.setTileTexture(x, y, myFarm.getSoilTexture());
                             }
                             else
                             {
@@ -296,9 +293,9 @@ int main()
                                     }
                                 }
                             }
-                            for (auto &parsnip : parsnipList)
+                            for (auto &crop : cropList)
                             {
-                                parsnip.grow();
+                                crop->grow();
                             }
                         }
                         if (event.mouseButton.y > 60 && event.mouseButton.y < 640)
@@ -315,11 +312,11 @@ int main()
                                     myFarm.setTileTexture(x, y, myFarm.getWetSoilTexture());
                                     wateringCanClicks++;
                                     // Find the parsnip at this location and water it
-                                    for (auto &parsnip : parsnipList)
+                                    for (auto &crop : cropList)
                                     {
-                                        if (parsnip.getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52))
+                                        if (crop->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52))
                                         {
-                                            parsnip.water();
+                                            crop->water();
                                         }
                                     }
                                     if (wateringCanClicks >= 10)
@@ -330,15 +327,31 @@ int main()
                                     }
                                 }
                             }
-                            if (myInventory.getSelectedInventoryIndex() == 2)
+                            if (myInventory.getSelectedInventoryIndex() == 2) // Just as an example, change the index as per your application
                             {
                                 bool isTileWet = (myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture());
                                 if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture() ||
                                     myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
                                 {
-                                    Parsnip newParsnip;
-                                    newParsnip.plant(x * tileSize, y * tileSize + 52, isTileWet); // Pass in the isTileWet flag
-                                    parsnipList.push_back(newParsnip);
+                                    std::unique_ptr<Crop> newCrop = std::make_unique<Parsnip>(); // Changed to Parsnip here
+                                    std::cout << "Required Waterings for this Parsnip: " << newCrop->getRequiredWaterings() << std::endl;
+
+                                    newCrop->plant(x * tileSize, y * tileSize + 52, isTileWet);
+                                    cropList.push_back(std::move(newCrop));
+                                }
+                            }
+
+                            if (myInventory.getSelectedInventoryIndex() == 3)
+                            {
+                                bool isTileWet = (myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture());
+                                if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture() ||
+                                    myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
+                                {
+                                    std::unique_ptr<Crop> newCrop = std::make_unique<Turnip>();
+                                    std::cout << "Required Waterings for this Turnip: " << newCrop->getRequiredWaterings() << std::endl; // Assuming you have a getter for requiredWaterings
+
+                                    newCrop->plant(x * tileSize, y * tileSize + 52, isTileWet);
+                                    cropList.push_back(std::move(newCrop));
                                 }
                             }
                         }
@@ -422,9 +435,9 @@ int main()
 
         window.draw(hoeIcon);
 
-        for (auto &parsnip : parsnipList)
+        for (auto &crop : cropList)
         {
-            parsnip.draw(window);
+            crop->draw(window);
         }
 
         for (const auto &icon : cropIcons)

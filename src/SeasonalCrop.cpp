@@ -1,7 +1,8 @@
 #include "SeasonalCrop.h"
 #include <iostream>
 
-SeasonalCrop::SeasonalCrop(const std::string &preferredSeason) : preferredSeason(preferredSeason), daysSincePlanted(0), timesWatered(0), mature(false)
+SeasonalCrop::SeasonalCrop(const std::string &preferredSeason, int requiredWaterings)
+    : preferredSeason(preferredSeason), requiredWaterings(requiredWaterings), daysSincePlanted(0), timesWatered(0)
 {
 }
 SeasonalCrop::~SeasonalCrop()
@@ -31,10 +32,8 @@ void SeasonalCrop::plant(int x, int y, bool isTileWet)
 {
     sprite.setPosition(x, y);
     sprite.setTexture(textureGrowing);
-    if (isTileWet)
-    {
-        timesWatered = 1;
-    }
+    timesWatered = isTileWet ? 1 : 0;
+    mature = false;
 }
 
 void SeasonalCrop::harvest()
@@ -47,4 +46,9 @@ void SeasonalCrop::harvest()
     {
         std::cout << "Cannot harvest. The crop is not yet mature." << std::endl;
     }
+}
+
+int SeasonalCrop::getRequiredWaterings() const
+{
+    return requiredWaterings;
 }
