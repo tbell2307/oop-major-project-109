@@ -88,6 +88,12 @@ int main()
         return -1;
     }
 
+    sf::Texture bedTexture;
+    if (!bedTexture.loadFromFile("src/assets/bed.png"))
+    {
+        return -1;
+    }
+
     sf::Texture lTimeTexture;
     if (!lTimeTexture.loadFromFile("src/assets/time-left.png"))
     {
@@ -182,6 +188,10 @@ int main()
     wateringCanIcon.setPosition(92, 670);
 
     sf::RectangleShape waterTiles[12];
+    sf::RectangleShape bedTile;
+
+    bedTile.setSize(sf::Vector2f(50, 50));
+    bedTile.setTexture(&bedTexture);
 
     for (int i = 0; i < 12; ++i)
     {
@@ -192,9 +202,13 @@ int main()
         {
             waterTiles[i].setTexture(&waterTexture);
         }
-        else if (i == 6 || i == 7 || i == 8)
+        else if (i == 3 || i == 4 || i == 5)
         {
             waterTiles[i].setTexture(&houseTexture);
+            if (i == 4)
+            {
+                bedTile.setPosition(i * 50, 0);
+            }
         }
         else if (i == 9)
         {
@@ -279,7 +293,7 @@ int main()
                             wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
                             wateringCanClicks = 0;
                         }
-                        if (event.mouseButton.x > 300 && event.mouseButton.x < 450 && event.mouseButton.y < 60)
+                        if (event.mouseButton.x > 150 && event.mouseButton.x < 300 && event.mouseButton.y < 60)
                         {
                             myTime.passDay();
                             std::cout << "Current Day: " << myTime.getCurrentDay() << std::endl;
@@ -438,6 +452,8 @@ int main()
         window.draw(seasonText);
 
         window.draw(hoeIcon);
+
+        window.draw(bedTile);
 
         for (auto &crop : cropList)
         {
