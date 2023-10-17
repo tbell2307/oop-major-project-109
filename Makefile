@@ -1,32 +1,40 @@
 # Compiler and flags
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Iinc
+CXXFLAGS := -std=c++17 -lstdc++fs -Wall -Wextra
 
 # Directories
 SRC_DIR := src
-BUILD_DIR := build
+OBJ_DIR := obj
 INC_DIR := inc
+LIB_DIR := libs
 
-# Source files
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+# Executable name
+TARGET := my_program
 
-# Object files
-OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+# Source files (replace <your_source_files> with actual source files)
+SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
-# Target executable
-TARGET := Run_Farm
+# Include directories
+INC_FLAGS := -I$(INC_DIR) -I$(LIB_DIR)/nlohmann/single_include -I$(LIB_DIR)/fmt/include -I$(LIB_DIR)/SFML/include
 
-.PHONY: all clean
 
-all: $(BUILD_DIR)/$(TARGET)
+# Libraries
+LIBS := -lsfml-graphics -lsfml-window -lsfml-system
 
-$(BUILD_DIR)/$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+# Build rule
+$(TARGET): $(OBJ_FILES)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Compilation rule
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(INC_FLAGS) -c $< -o $@
+
+# Ensure the obj directory exists
+$(shell mkdir -p $(OBJ_DIR))
+
+.PHONY: clean
 
 clean:
-	rm -rf $(BUILD_DIR)
-
+	$(RM) -r $(OBJ_DIR)
+	$(RM) $(TARGET)
