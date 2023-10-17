@@ -27,25 +27,6 @@
 
 int main(void)
 {
-    // get the dimensions of the farm from the user
-    int x_dim = 6;
-    int y_dim = 7;
-    int x, y;
-    // create the farm
-    Farm farm(x_dim, y_dim);
-    // create a Time object to track the in-game time
-    Time time;
-    // calculate the maximum number of crops
-    int maxCrops = farm.getMaxCrops();
-    // create an array to store the crops locally in the main file
-    Crop *crops[maxCrops];
-    // initialise variables for the below while loop, which contains the content of the game.
-    ShippingBin shippingBin;
-    Coins coins;
-    Inventory inventory;
-    int currentCropCount = 0;
-    bool gameInProgress = true;
-    std::string cropOptions[8] = {"Parsnip", "Kale", "Wheat", "Cabbage", "Eggplant", "Yam", "Rhubarb", "Beetroot"};
 
     namespace fs = std::filesystem;
     using json = nlohmann::json;
@@ -63,15 +44,15 @@ int main(void)
 
     if (jsonFiles.empty())
     {
-        std::cout << "No JSON files found in the 'saves' directory.\n";
+        std::cout << "No JSON files found in the 'saves' directory." << std::endl;
     }
 
-    std::cout << "Available JSON files:\n";
+    std::cout << "Available JSON files: " << std::endl;
     for (size_t i = 0; i < jsonFiles.size(); ++i)
     {
         std::cout << i + 1 << ". " << jsonFiles[i].filename() << "\n";
     }
-    std::cout << jsonFiles.size() + 1 << ". Don't use a save\n";
+    std::cout << jsonFiles.size() + 1 << ". Don't use a save " << std::endl;
 
     int choice;
     std::cout << "Select a file (1-" << jsonFiles.size() + 1 << "): ";
@@ -101,6 +82,25 @@ int main(void)
         std::cout << "Invalid choice. Not using a save.\n";
     }
 
+    // get the dimensions of the farm from the user
+    int x_dim = 6;
+    int y_dim = 7;
+    int x, y;
+    // create the farm
+    Farm farm(x_dim, y_dim);
+    // create a Time object to track the in-game time
+    Time time;
+    // calculate the maximum number of crops
+    int maxCrops = farm.getMaxCrops();
+    // create an array to store the crops locally in the main file
+    Crop *crops[maxCrops];
+    // initialise variables for the below while loop, which contains the content of the game.
+    ShippingBin shippingBin;
+    Coins coins;
+    Inventory inventory;
+    int currentCropCount = 0;
+    bool gameInProgress = true;
+    std::string cropOptions[8] = {"Parsnip", "Kale", "Wheat", "Cabbage", "Eggplant", "Yam", "Rhubarb", "Beetroot"};
     // main while loop which repeats while the user hasn't prompted the game to end
     while (gameInProgress && currentCropCount < maxCrops)
     {
@@ -644,6 +644,23 @@ int main(void)
         {
             gameInProgress = false;
             std::cout << "Game over. Thank you for playing." << std::endl;
+
+            json gameState;
+
+            gameState["Coins"] = coins.getCoins();
+            gameState["Time"] = time.getDaysPassed();
+
+            // Exporting farm field
+            std::vector<Crop***> serializedFarm;
+            serializedFarm.push_back(farm.getFarmField());
+
+            // Serialize the game state
+            std::string serializedData = gameState.dump();
+
+            // Save the serialized data to a file
+            std::ofstream outputFile("saves/game_state.json");
+            outputFile << serializedData;
+            outputFile.close();
         }
         else
         {
