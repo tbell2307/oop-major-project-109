@@ -1,12 +1,12 @@
-#include "Turnip.h"
+#include "PinkTurnip.h"
 #include <iostream>
 
-sf::Texture Turnip::textureGrowing;
-sf::Texture Turnip::textureMature;
+sf::Texture PinkTurnip::textureGrowing;
+sf::Texture PinkTurnip::textureMature;
 
-Turnip::Turnip() : SeasonalCrop("Spring", 6)
+PinkTurnip::PinkTurnip() : SeasonalCrop("Summer", 5)
 {
-    sellValue = 110;
+    sellValue = 90;
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
     {
         if (!textureGrowing.loadFromFile("src/assets/seeds.png"))
@@ -17,9 +17,9 @@ Turnip::Turnip() : SeasonalCrop("Spring", 6)
 
     if (textureMature.getSize().x == 0 && textureMature.getSize().y == 0)
     {
-        if (!textureMature.loadFromFile("src/assets/turnip0.png"))
+        if (!textureMature.loadFromFile("src/assets/pink_turnip0.png"))
         {
-            std::cout << "Error loading turnip0.png" << std::endl;
+            std::cout << "Error loading pink_turnip0.png" << std::endl;
         }
     }
 
@@ -32,21 +32,21 @@ Turnip::Turnip() : SeasonalCrop("Spring", 6)
     sprite.setScale(scaleX, scaleY);
 }
 
-Turnip::~Turnip()
+PinkTurnip::~PinkTurnip()
 {
 }
 
-sf::Vector2f Turnip::getPosition() const
+sf::Vector2f PinkTurnip::getPosition() const
 {
     return sprite.getPosition();
 }
 
-void Turnip::harvest()
+void PinkTurnip::harvest()
 {
     sprite.setTexture(textureMature);
 }
 
-void Turnip::draw(sf::RenderWindow &window)
+void PinkTurnip::draw(sf::RenderWindow &window)
 {
     if (isMature())
     {

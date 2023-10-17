@@ -6,13 +6,21 @@
 #include "Weather.h"
 #include "Time.h"
 #include "Parsnip.h"
-
+#include "PinkTurnip.h"
+#include "RedTurnip.h"
+#include "Carrot.h"
+#include "GreenTurnip.h"
+#include "WinterRoot.h"
+#include "Beetroot.h"
 #include "Turnip.h"
 #include "CropsToSell.h"
 #include "Money.h"
 
 #include <vector>
 #include <list>
+#include <map>
+#include <functional>
+#include <memory>
 
 int main()
 {
@@ -45,7 +53,24 @@ int main()
     myWeather.setCurrentWeather(0);
 
     std::list<std::unique_ptr<Crop>> cropList;
-    ;
+    std::map<int, std::function<std::unique_ptr<Crop>()>> cropFactoryMap = {
+        {2, []()
+         { return std::make_unique<Parsnip>(); }},
+        {3, []()
+         { return std::make_unique<Turnip>(); }},
+        {4, []()
+         { return std::make_unique<PinkTurnip>(); }},
+        {5, []()
+         { return std::make_unique<RedTurnip>(); }},
+        {6, []()
+         { return std::make_unique<Carrot>(); }},
+        {7, []()
+         { return std::make_unique<GreenTurnip>(); }},
+        {8, []()
+         { return std::make_unique<WinterRoot>(); }},
+        {9, []()
+         { return std::make_unique<Beetroot>(); }},
+    };
 
     sf::Texture pathTexture;
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
@@ -368,26 +393,15 @@ int main()
                                     }
                                 }
                             }
-                            if (myInventory.getSelectedInventoryIndex() == 2) // Just as an example, change the index as per your application
+                            int selectedInventoryIndex = myInventory.getSelectedInventoryIndex();
+                            if (cropFactoryMap.find(selectedInventoryIndex) != cropFactoryMap.end())
                             {
                                 bool isTileWet = (myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture());
                                 if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture() ||
                                     myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
                                 {
-                                    std::unique_ptr<Crop> newCrop = std::make_unique<Parsnip>();
 
-                                    newCrop->plant(x * tileSize, y * tileSize + 52, isTileWet);
-                                    cropList.push_back(std::move(newCrop));
-                                }
-                            }
-
-                            if (myInventory.getSelectedInventoryIndex() == 3)
-                            {
-                                bool isTileWet = (myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture());
-                                if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture() ||
-                                    myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
-                                {
-                                    std::unique_ptr<Crop> newCrop = std::make_unique<Turnip>();
+                                    std::unique_ptr<Crop> newCrop = cropFactoryMap[selectedInventoryIndex]();
 
                                     newCrop->plant(x * tileSize, y * tileSize + 52, isTileWet);
                                     cropList.push_back(std::move(newCrop));
