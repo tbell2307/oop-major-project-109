@@ -10,6 +10,18 @@ public:
     void draw(sf::RenderWindow &window);
     void setSelection(int index);
     int getSelectedInventoryIndex() const { return selectedInventoryIndex; }
+    int getCropCount(int index);
+    void decrementCropCount(int index);
+    void incrementCropCount(int index);
+    int getCropBuyPrice(int index) const
+    {
+        return CropBuyPrice.at(index);
+    }
+
+    void setCropBuyPrice(int index, int price)
+    {
+        CropBuyPrice[index] = price;
+    }
 
 private:
     sf::RectangleShape inventory[10];
@@ -17,6 +29,8 @@ private:
     sf::Texture inventoryTexture;
     sf::Texture inventoryBackgroundTexture;
     int selectedInventoryIndex;
+    std::map<int, int> cropCount;
+    std::map<int, int> CropBuyPrice;
 };
 
 #endif

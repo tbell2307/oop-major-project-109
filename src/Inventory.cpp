@@ -1,8 +1,26 @@
 #include "include/Inventory.h"
+#include <iostream>
 
 Inventory::Inventory()
     : selectedInventoryIndex(-1)
 {
+    cropCount[2] = 5;
+    cropCount[3] = 5;
+    cropCount[4] = 0;
+    cropCount[5] = 0;
+    cropCount[6] = 0;
+    cropCount[7] = 0;
+    cropCount[8] = 0;
+    cropCount[9] = 0;
+
+    CropBuyPrice[2] = 20;
+    CropBuyPrice[3] = 30;
+    CropBuyPrice[4] = 40;
+    CropBuyPrice[5] = 50;
+    CropBuyPrice[6] = 60;
+    CropBuyPrice[7] = 70;
+    CropBuyPrice[8] = 80;
+    CropBuyPrice[9] = 90;
     // Load textures
     if (!inventoryTexture.loadFromFile("src/assets/inventory.jpeg") ||
         !inventoryBackgroundTexture.loadFromFile("src/assets/inventory-background.jpeg"))
@@ -59,6 +77,30 @@ void Inventory::draw(sf::RenderWindow &window)
     {
         window.draw(inventory[selectedInventoryIndex]);
     }
+
+    sf::Font font; // Font for the text
+    if (!font.loadFromFile("src/assets/font.ttf"))
+    {
+        std::cout << "Failed to load font" << std::endl;
+    }
+
+    for (auto &[index, count] : cropCount)
+    {
+        sf::Text countText;
+        countText.setFont(font); // Set the font
+        countText.setString(std::to_string(count));
+
+        // Original Position
+        int posX = index * 52 + 42;
+        int posY = 625 + 52;
+        countText.setPosition(posX, posY);
+
+        countText.setCharacterSize(16);
+        countText.setFillColor(sf::Color::White);
+
+        // Draw the text
+        window.draw(countText);
+    }
 }
 
 void Inventory::setSelection(int index)
@@ -79,4 +121,20 @@ void Inventory::setSelection(int index)
 
     // Update border color
     inventory[selectedInventoryIndex].setOutlineColor(sf::Color::White);
+}
+
+int Inventory::getCropCount(int index)
+{
+    return cropCount[index];
+}
+
+void Inventory::decrementCropCount(int index)
+{
+    if (cropCount[index] > 0)
+        cropCount[index]--;
+}
+
+void Inventory::incrementCropCount(int index)
+{
+    cropCount[index]++;
 }

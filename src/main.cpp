@@ -35,8 +35,7 @@ int main()
     Weather myWeather;
     Time myTime;
     CropsToSell myCropsToSell;
-    Money myMoney(0);
-
+    Money myMoney(500);
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
     std::string currentSeason = myTime.getCurrentSeason();
@@ -103,7 +102,9 @@ int main()
     sf::Text moneyText;
     moneyText.setFont(font);
     moneyText.setCharacterSize(24);
-    moneyText.setFillColor(sf::Color::White);
+    moneyText.setFillColor(sf::Color::Black);
+    moneyText.setOutlineThickness(2);            // set the thickness of the outline
+    moneyText.setOutlineColor(sf::Color::White); // set the color of the outline
     moneyText.setPosition(355, 10);
 
     sf::Texture waterTexture;
@@ -322,6 +323,36 @@ int main()
                     int x = clickedTile.x;
                     int y = clickedTile.y;
 
+                    int clickedInventoryIndex = -1; // Initialize to an invalid value
+
+                    // Loop over each inventory index from 2 to 9
+                    for (int i = 2; i <= 9; ++i)
+                    {
+                        int lowerX = 145 + (i - 2) * 52;
+                        int upperX = lowerX + 52;
+                        int lowerY = 680;
+                        int upperY = 730;
+
+                        // Check if the mouse is clicked within the bounds
+                        if (event.mouseButton.x > lowerX && event.mouseButton.x < upperX && event.mouseButton.y > lowerY && event.mouseButton.y < upperY)
+                        {
+                            clickedInventoryIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (clickedInventoryIndex >= 2 && clickedInventoryIndex <= 9)
+                    {
+                        if (myInventory.getCropCount(clickedInventoryIndex) < 99)
+                        {
+                            if (myMoney.getAmount() >= myInventory.getCropBuyPrice(clickedInventoryIndex))
+                            {
+                                myMoney.addAmount(-myInventory.getCropBuyPrice(clickedInventoryIndex));
+                                myInventory.incrementCropCount(clickedInventoryIndex);
+                            }
+                        }
+                    }
+
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1)
                     {
@@ -443,11 +474,16 @@ int main()
                                 if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture() ||
                                     myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
                                 {
+                                    // Check if there's enough of this crop in the inventory
+                                    if (myInventory.getCropCount(selectedInventoryIndex) > 0)
+                                    {
+                                        std::unique_ptr<Crop> newCrop = cropFactoryMap[selectedInventoryIndex]();
+                                        newCrop->plant(x * tileSize, y * tileSize + 52, isTileWet);
+                                        cropList.push_back(std::move(newCrop));
 
-                                    std::unique_ptr<Crop> newCrop = cropFactoryMap[selectedInventoryIndex]();
-
-                                    newCrop->plant(x * tileSize, y * tileSize + 52, isTileWet);
-                                    cropList.push_back(std::move(newCrop));
+                                        // Decrease the crop count in the inventory
+                                        myInventory.decrementCropCount(selectedInventoryIndex);
+                                    }
                                 }
                             }
                         }
