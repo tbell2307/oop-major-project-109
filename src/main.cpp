@@ -235,7 +235,7 @@ int main()
         }
         else if (i == 6)
         {
-            waterTiles[i].setTexture(&pathTexture);
+            waterTiles[i].setTexture(&houseTexture);
             shopTile.setPosition(i * 50, 0);
         }
         else if (i == 7 || i == 8)
@@ -327,7 +327,7 @@ int main()
                             wateringCanIcon.setTexture(wateringCanTextures[wateringCanTextureIndex]);
                             wateringCanClicks = 0;
                         }
-                        if (event.mouseButton.x > 150 && event.mouseButton.x < 300 && event.mouseButton.y < 60)
+                        if (event.mouseButton.x > 200 && event.mouseButton.x < 250 && event.mouseButton.y < 60)
                         {
                             myTime.passDay();
                             std::cout << "Current Day: " << myTime.getCurrentDay() << std::endl;
