@@ -1,4 +1,4 @@
-#include "Person.h"
+#include "include/Person.h"
 
 Person::Person(const std::string &texturePath, int tileSize)
 {

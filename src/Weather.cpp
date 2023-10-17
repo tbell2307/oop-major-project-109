@@ -1,4 +1,4 @@
-#include "Weather.h"
+#include "include/Weather.h"
 #include <iostream>
 
 Weather::Weather() : currentWeatherIndex(0)
