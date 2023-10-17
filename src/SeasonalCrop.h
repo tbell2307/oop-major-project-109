@@ -10,7 +10,7 @@ class SeasonalCrop : public Crop
 public:
     SeasonalCrop(const std::string &preferredSeason, int requiredWaterings);
     virtual ~SeasonalCrop();
-    virtual void grow() override;
+    virtual void grow(const std::string &currentSeason) override;
     virtual void water() override;
     virtual void plant(int x, int y, bool isTileWet) override;
     virtual void harvest() override;

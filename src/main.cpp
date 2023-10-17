@@ -359,9 +359,10 @@ int main()
                                     }
                                 }
                             }
+                            std::string currentSeason = myTime.getCurrentSeason();
                             for (auto &crop : cropList)
                             {
-                                crop->grow();
+                                crop->grow(currentSeason);
                             }
                         }
                         if (event.mouseButton.y > 60 && event.mouseButton.y < 640)

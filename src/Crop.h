@@ -11,7 +11,7 @@ public:
     virtual ~Crop();
 
     // Virtual functions to allow overriding in derived classes
-    virtual void grow();
+    virtual void grow(const std::string &currentSeason);
     virtual void water();
     virtual void plant(int x, int y, bool isTileWet);
     virtual void harvest();

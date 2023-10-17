@@ -7,13 +7,21 @@ SeasonalCrop::SeasonalCrop(const std::string &preferredSeason, int requiredWater
 }
 SeasonalCrop::~SeasonalCrop()
 {
-    // Destructor logic here
 }
 
-void SeasonalCrop::grow()
+void SeasonalCrop::grow(const std::string &currentSeason)
 {
     ++daysSincePlanted;
-    if (timesWatered >= requiredWaterings && !mature)
+
+    int adjustedRequiredWaterings = requiredWaterings;
+
+    // Check if the current season is not the preferred season for the crop
+    if (currentSeason != preferredSeason)
+    {
+        adjustedRequiredWaterings = requiredWaterings * 3; // Takes three times more waterings to mature
+    }
+
+    if (timesWatered >= adjustedRequiredWaterings && !mature)
     {
         sprite.setTexture(textureMature);
         mature = true;

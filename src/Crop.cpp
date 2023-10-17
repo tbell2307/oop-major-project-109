@@ -11,7 +11,7 @@ Crop::~Crop()
     // Destructor logic here
 }
 
-void Crop::grow()
+void Crop::grow(const std::string &currentSeason)
 {
     std::cout << "Generic crop growing logic" << std::endl;
 }
