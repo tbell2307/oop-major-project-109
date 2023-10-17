@@ -10,8 +10,8 @@ public:
     Parsnip();
     ~Parsnip();
     void grow() override;
-    void water();
-    void plant(int x, int y, bool isTileWet);
+    void water() override;
+    void plant(int x, int y, bool isTileWet) override;
     sf::Vector2f getPosition() const;
     void harvest() override;
     void draw(sf::RenderWindow &window);

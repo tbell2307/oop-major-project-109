@@ -1,11 +1,9 @@
 #include "SeasonalCrop.h"
 #include <iostream>
 
-SeasonalCrop::SeasonalCrop(const std::string &preferredSeason) : preferredSeason(preferredSeason)
+SeasonalCrop::SeasonalCrop(const std::string &preferredSeason) : preferredSeason(preferredSeason), daysSincePlanted(0), timesWatered(0), mature(false)
 {
-    // Constructor logic here
 }
-
 SeasonalCrop::~SeasonalCrop()
 {
     // Destructor logic here
@@ -13,10 +11,40 @@ SeasonalCrop::~SeasonalCrop()
 
 void SeasonalCrop::grow()
 {
-    std::cout << "Growing logic for " << preferredSeason << " crops" << std::endl;
+    ++daysSincePlanted;
+    if (timesWatered >= requiredWaterings && !mature)
+    {
+        sprite.setTexture(textureMature);
+        mature = true;
+    }
+}
+
+void SeasonalCrop::water()
+{
+    if (!mature)
+    {
+        ++timesWatered;
+    }
+}
+
+void SeasonalCrop::plant(int x, int y, bool isTileWet)
+{
+    sprite.setPosition(x, y);
+    sprite.setTexture(textureGrowing);
+    if (isTileWet)
+    {
+        timesWatered = 1;
+    }
 }
 
 void SeasonalCrop::harvest()
 {
-    std::cout << "Harvesting logic for " << preferredSeason << " crops" << std::endl;
+    if (mature)
+    {
+        std::cout << "Harvesting " << preferredSeason << "-specific crop" << std::endl;
+    }
+    else
+    {
+        std::cout << "Cannot harvest. The crop is not yet mature." << std::endl;
+    }
 }

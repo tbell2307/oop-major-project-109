@@ -4,9 +4,10 @@
 sf::Texture Parsnip::textureGrowing;
 sf::Texture Parsnip::textureMature;
 
-Parsnip::Parsnip() : SeasonalCrop("Spring"), daysSincePlanted(0), timesWatered(0), mature(false)
+Parsnip::Parsnip() : SeasonalCrop("Spring")
 {
-    // Load the textures if they have not been loaded yet
+    requiredWaterings = 4;
+
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
     {
         if (!textureGrowing.loadFromFile("src/assets/seeds.png"))
@@ -25,9 +26,10 @@ Parsnip::Parsnip() : SeasonalCrop("Spring"), daysSincePlanted(0), timesWatered(0
 
     sprite.setTexture(textureGrowing);
 
-    sf::Vector2u textureSize = textureGrowing.getSize();
-    float scaleX = static_cast<float>(50) / static_cast<float>(textureSize.x);
-    float scaleY = static_cast<float>(50) / static_cast<float>(textureSize.y);
+    // Set scaling
+    sf::Vector2u textureSize = sprite.getTexture()->getSize();
+    float scaleX = 2.4f;
+    float scaleY = 2.4f;
     sprite.setScale(scaleX, scaleY);
 }
 
