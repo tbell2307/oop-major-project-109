@@ -24,7 +24,7 @@ bool Weather::loadTextures(const std::vector<std::string> &filenames)
 
 void Weather::setCurrentWeather(int index)
 {
-    if (index >= 0 && index < weatherTextures.size())
+    if (index >= 0 && index < static_cast<int>(weatherTextures.size()))
     {
         currentWeatherIndex = index;
         weatherSprite.setTexture(weatherTextures[currentWeatherIndex]);

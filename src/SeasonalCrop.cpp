@@ -2,7 +2,7 @@
 #include <iostream>
 
 SeasonalCrop::SeasonalCrop(const std::string &preferredSeason, int requiredWaterings)
-    : preferredSeason(preferredSeason), requiredWaterings(requiredWaterings), daysSincePlanted(0), timesWatered(0)
+    : preferredSeason(preferredSeason), daysSincePlanted(0), timesWatered(0), requiredWaterings(requiredWaterings)
 {
 }
 SeasonalCrop::~SeasonalCrop()
