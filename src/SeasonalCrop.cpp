@@ -18,7 +18,11 @@ void SeasonalCrop::grow(const std::string &currentSeason)
     // Check if the current season is not the preferred season for the crop
     if (currentSeason != preferredSeason)
     {
-        adjustedRequiredWaterings = requiredWaterings * 3; // Takes three times more waterings to mature
+        adjustedRequiredWaterings = requiredWaterings * 4;
+    }
+    else
+    {
+        adjustedRequiredWaterings = requiredWaterings * 2;
     }
 
     if (timesWatered >= adjustedRequiredWaterings && !mature)

@@ -39,9 +39,13 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
+    std::string currentSeason = myTime.getCurrentSeason();
+
     // Load textures
     std::vector<std::string> weatherFiles = {
-        "src/assets/weather1.png"};
+        "src/assets/sunny.png",
+        "src/assets/rainy.png",
+    };
 
     if (!myWeather.loadTextures(weatherFiles))
     {
@@ -348,18 +352,56 @@ int main()
                         if (event.mouseButton.x > 200 && event.mouseButton.x < 250 && event.mouseButton.y < 60)
                         {
                             myTime.passDay();
-                            std::cout << "Current Day: " << myTime.getCurrentDay() << std::endl;
+                            myWeather.updateWeather();
+
+                            if (myWeather.getCurrentWeather() == Weather::RAINY)
+                            {
+                                std::cout << "Weather is RAINY." << std::endl;
+                                for (int x = 0; x < 12; ++x)
+                                {
+                                    for (int y = 0; y < 12; ++y)
+                                    {
+                                        if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture())
+                                        {
+                                            std::cout << "Changing soil to wet at position (" << x << ", " << y << ")." << std::endl;
+                                            myFarm.setTileTexture(x, y, myFarm.getWetSoilTexture());
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Step 2: Water and grow the crops
                             for (int x = 0; x < 12; ++x)
                             {
                                 for (int y = 0; y < 12; ++y)
                                 {
                                     if (myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
                                     {
-                                        myFarm.setTileTexture(x, y, myFarm.getSoilTexture());
+                                        for (auto &crop : cropList)
+                                        {
+                                            if (crop->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52))
+                                            {
+                                                crop->water();
+                                                crop->grow(currentSeason);
+                                            }
+                                        }
                                     }
                                 }
                             }
-                            std::string currentSeason = myTime.getCurrentSeason();
+                            if (myWeather.getCurrentWeather() != Weather::RAINY)
+                            {
+                                std::cout << "Current Day: " << myTime.getCurrentDay() << std::endl;
+                                for (int x = 0; x < 12; ++x)
+                                {
+                                    for (int y = 0; y < 12; ++y)
+                                    {
+                                        if (myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
+                                        {
+                                            myFarm.setTileTexture(x, y, myFarm.getSoilTexture());
+                                        }
+                                    }
+                                }
+                            }
                             for (auto &crop : cropList)
                             {
                                 crop->grow(currentSeason);
