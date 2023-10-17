@@ -6,7 +6,7 @@ sf::Texture Turnip::textureMature;
 
 Turnip::Turnip() : SeasonalCrop("Spring", 6)
 {
-
+    sellValue = 50;
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
     {
         if (!textureGrowing.loadFromFile("src/assets/seeds.png"))

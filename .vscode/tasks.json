@@ -20,6 +20,7 @@
         "src/Parsnip.cpp",
         "src/Turnip.cpp",
         "src/CropsToSell.cpp",
+        "src/Money.cpp",
         "-I/opt/homebrew/Cellar/sfml/2.6.0/include",
         "-L/opt/homebrew/Cellar/sfml/2.6.0/lib",
         "-lsfml-graphics",

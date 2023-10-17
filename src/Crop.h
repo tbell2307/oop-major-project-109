@@ -19,6 +19,10 @@ public:
     virtual bool isMature() const;
     virtual sf::Vector2f getPosition() const;
     virtual int getRequiredWaterings() const { return -1; }
+    virtual int getSellValue() const
+    {
+        return sellValue;
+    }
 
     virtual std::string getType() const
     {
@@ -30,6 +34,7 @@ protected:
     sf::Sprite sprite;
     sf::Texture textureGrowing;
     sf::Texture textureMature;
+    int sellValue = 0;
 };
 
 #endif

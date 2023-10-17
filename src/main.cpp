@@ -8,6 +8,7 @@
 #include "Parsnip.h"
 #include "Turnip.h"
 #include "CropsToSell.h"
+#include "Money.h"
 
 #include <vector>
 #include <list>
@@ -27,6 +28,7 @@ int main()
     Parsnip myParsnip;
     Turnip myTurnip;
     CropsToSell myCropsToSell;
+    Money myMoney(0);
 
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
@@ -76,6 +78,12 @@ int main()
     seasonText.setFillColor(sf::Color::White);
     seasonText.setPosition(476, 26);
 
+    sf::Text moneyText;
+    moneyText.setFont(font);
+    moneyText.setCharacterSize(24);
+    moneyText.setFillColor(sf::Color::White);
+    moneyText.setPosition(355, 10);
+
     sf::Texture waterTexture;
     if (!waterTexture.loadFromFile("src/assets/water.jpeg"))
     {
@@ -90,6 +98,18 @@ int main()
 
     sf::Texture bedTexture;
     if (!bedTexture.loadFromFile("src/assets/bed.png"))
+    {
+        return -1;
+    }
+
+    sf::Texture shopTexture;
+    if (!shopTexture.loadFromFile("src/assets/shop.png"))
+    {
+        return -1;
+    }
+
+    sf::Texture moneyTexture;
+    if (!moneyTexture.loadFromFile("src/assets/money.jpeg"))
     {
         return -1;
     }
@@ -189,7 +209,10 @@ int main()
 
     sf::RectangleShape waterTiles[12];
     sf::RectangleShape bedTile;
+    sf::RectangleShape shopTile;
 
+    shopTile.setSize(sf::Vector2f(50, 50));
+    shopTile.setTexture(&shopTexture);
     bedTile.setSize(sf::Vector2f(50, 50));
     bedTile.setTexture(&bedTexture);
 
@@ -209,6 +232,15 @@ int main()
             {
                 bedTile.setPosition(i * 50, 0);
             }
+        }
+        else if (i == 6)
+        {
+            waterTiles[i].setTexture(&pathTexture);
+            shopTile.setPosition(i * 50, 0);
+        }
+        else if (i == 7 || i == 8)
+        {
+            waterTiles[i].setTexture(&moneyTexture);
         }
         else if (i == 9)
         {
@@ -238,6 +270,7 @@ int main()
     {
         timeText.setString("Day: " + std::to_string(myTime.getCurrentDay()));
         seasonText.setString(myTime.getCurrentSeason());
+        moneyText.setString("$" + std::to_string(myMoney.getAmount()));
         auto isWithinWaterRefillArea = [&](int mouseX, int mouseY) -> bool
         {
             // Logic to determine if the click is within the water refill area (top three tiles)
@@ -276,6 +309,7 @@ int main()
                             if ((*it)->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52) && (*it)->isMature())
                             {
                                 myCropsToSell.addCrop(it->get()); // assuming addCrop takes a Crop pointer
+                                myMoney.addAmount((*it)->getSellValue());
                                 it = cropList.erase(it);
 
                                 // Reset the tile's texture to normal soil
@@ -451,9 +485,13 @@ int main()
 
         window.draw(seasonText);
 
+        window.draw(moneyText);
+
         window.draw(hoeIcon);
 
         window.draw(bedTile);
+
+        window.draw(shopTile);
 
         for (auto &crop : cropList)
         {

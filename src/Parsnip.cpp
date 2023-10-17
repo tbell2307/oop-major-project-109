@@ -6,7 +6,7 @@ sf::Texture Parsnip::textureMature;
 
 Parsnip::Parsnip() : SeasonalCrop("Spring", 4)
 {
-
+    sellValue = 30;
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
     {
         if (!textureGrowing.loadFromFile("src/assets/seeds.png"))
