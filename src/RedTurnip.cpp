@@ -26,7 +26,6 @@ RedTurnip::RedTurnip() : SeasonalCrop("Summer", 3)
     sprite.setTexture(textureGrowing);
 
     // Set scaling
-    sf::Vector2u textureSize = sprite.getTexture()->getSize();
     float scaleX = 2.4f;
     float scaleY = 2.4f;
     sprite.setScale(scaleX, scaleY);

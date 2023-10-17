@@ -13,7 +13,7 @@ Crop::~Crop()
 
 void Crop::grow(const std::string &currentSeason)
 {
-    std::cout << "Generic crop growing logic" << std::endl;
+    std::cout << "Generic crop growing logic" << currentSeason << std::endl;
 }
 
 void Crop::harvest()
@@ -28,7 +28,7 @@ void Crop::water()
 
 void Crop::plant(int x, int y, bool isTileWet)
 {
-    std::cout << "Generic planting logic" << std::endl;
+    std::cout << "Generic planting logic" << x << y << isTileWet << std::endl;
 }
 
 void Crop::draw(sf::RenderWindow &window)

@@ -23,9 +23,6 @@ Inventory::Inventory()
         }
     }
 
-    int inventorySize = 10;
-    int inventoryTileSize = 50;
-
     int startX = 42;
     int startY = 625;
 
