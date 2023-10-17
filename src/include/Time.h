@@ -2,6 +2,7 @@
 #define TIME_H
 
 #include <string>
+#include <vector>
 
 class Time
 {
@@ -11,7 +12,7 @@ private:
     std::vector<std::string> seasons{"Spring", "Summer", "Autumn", "Winter"};
 
 public:
-    Time();
+    Time(int currDay);
     void passDay();
     int getCurrentDay() const;
     std::string getCurrentDayStr() const;

@@ -1,0 +1,11 @@
+{
+    "Crop_RedTurnip": {
+        "LocX": 50.0,
+        "LocY": 102.0,
+        "Type": "RedTurnip",
+        "isMature": false
+    },
+    "Day": 3,
+    "Money": 0,
+    "Season": "Spring"
+}

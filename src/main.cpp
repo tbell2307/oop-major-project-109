@@ -1,4 +1,6 @@
 #include <SFML/Graphics.hpp>
+#include "nlohmann/json.hpp"
+#include <fstream>
 #include <iostream>
 #include "include/Person.h"
 #include "include/Farm.h"
@@ -22,6 +24,9 @@
 #include <functional>
 #include <memory>
 
+using json = nlohmann::json;
+const std::string savefile = "savedGame.json";
+
 int main()
 {
     /////////////////////////////
@@ -29,14 +34,35 @@ int main()
     /////////////////////////////
 
     // Create the window
+    std::ifstream inputFile(savefile);
+    if (!inputFile.good())
+    {
+        std::ofstream newFile(savefile);
+    }
+
+    json jsonInputData;
+    inputFile >> jsonInputData;
+    inputFile.close();
+    int savedMoney = 0;
+    int savedTime = 0;
 
     Farm myFarm;
     Inventory myInventory;
     Weather myWeather;
-    Time myTime;
-    CropsToSell myCropsToSell;
-    Money myMoney(0);
 
+    CropsToSell myCropsToSell;
+    if (jsonInputData.find("Money") != jsonInputData.end())
+    {
+        savedMoney = jsonInputData["Money"];
+    }
+
+    if (jsonInputData.find("Days") != jsonInputData.end())
+    {
+        savedTime = jsonInputData["Days"];
+    }
+
+    Money myMoney(savedMoney);
+    Time myTime(savedTime);
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
 
     std::string currentSeason = myTime.getCurrentSeason();
@@ -306,6 +332,30 @@ int main()
             {
 
             case sf::Event::Closed:
+            {
+                json jsonData;
+                jsonData["Day"] = myTime.getCurrentDay();
+                jsonData["Season"] = myTime.getCurrentSeason();
+                jsonData["Money"] = myMoney.getAmount();
+                for (const auto &crop : cropList)
+                {
+                    std::string cropKey = "Crop_" + crop->getType();
+                    jsonData[cropKey]["Type"] = crop->getType();
+                    jsonData[cropKey]["LocX"] = crop->getPosition().x;
+                    jsonData[cropKey]["LocY"] = crop->getPosition().y;
+                    jsonData[cropKey]["isMature"] = crop->isMature();
+                }
+                std::ofstream outfile(savefile);
+                if (outfile.is_open())
+                {
+                    outfile << jsonData.dump(4);
+                    outfile.close();
+                }
+                else
+                {
+                    std::cerr << "Failed to open file for JSON serialization." << std::endl;
+                }
+            }
                 window.close();
                 break;
 

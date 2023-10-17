@@ -1,6 +1,6 @@
 #include "include/Time.h"
 
-Time::Time() : currentDay(1), currentSeasonIndex(0) {}
+Time::Time(int currDay) : currentDay(currDay), currentSeasonIndex(0) {}
 
 void Time::passDay()
 {
@@ -20,7 +20,6 @@ int Time::getCurrentDay() const
 {
     return currentDay;
 }
-
 std::string Time::getCurrentDayStr() const
 {
     return "Day: " + std::to_string(currentDay);

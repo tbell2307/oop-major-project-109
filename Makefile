@@ -1,6 +1,5 @@
-# Compiler and flags
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Iinc -I/opt/homebrew/Cellar/sfml/2.6.0/include
+CXXFLAGS := -std=c++20 -Wall -Wextra -Iinc -I/opt/homebrew/Cellar/sfml/2.6.0/include -Ilibs/json/include
 
 # Directories
 SRC_DIR := src
@@ -18,6 +17,9 @@ TARGET := output
 # SFML library paths
 SFML_LIB_DIR := /opt/homebrew/Cellar/sfml/2.6.0/lib
 SFML_LIBS := -lsfml-graphics -lsfml-window -lsfml-system
+
+# Nlohmann JSON library path
+JSON_LIB_DIR := libs/json
 
 .PHONY: all clean run
 
