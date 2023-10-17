@@ -39,7 +39,7 @@ void Parsnip::grow()
 {
     ++daysSincePlanted;
 
-    if (daysSincePlanted >= 4 && timesWatered >= 4 && !mature)
+    if (timesWatered >= 4 && !mature)
     {
         std::cout << "Parsnip has matured!" << std::endl;
         sprite.setTexture(textureMature);
@@ -49,7 +49,7 @@ void Parsnip::grow()
 
 void Parsnip::water()
 {
-    if (daysSincePlanted < 4 && !mature) // Only allow watering within the first 4 days and if not yet mature
+    if (!mature) // Only allow watering within the first 4 days and if not yet mature
     {
         ++timesWatered;
         std::cout << "Parsnip has been watered " << timesWatered << " times." << std::endl;

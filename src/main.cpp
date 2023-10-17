@@ -6,9 +6,11 @@
 #include "Weather.h"
 #include "Time.h"
 #include "Parsnip.h"
+#include "Turnip.h"
 #include "CropsToSell.h"
 
 #include <vector>
+#include <list>
 
 int main()
 {
@@ -23,6 +25,7 @@ int main()
     Weather myWeather;
     Time myTime;
     Parsnip myParsnip;
+    Turnip myTurnip;
     CropsToSell myCropsToSell;
 
     sf::RenderWindow window(sf::VideoMode(600, 755), "My Farm");
@@ -41,6 +44,7 @@ int main()
     myWeather.setCurrentWeather(0);
 
     std::vector<Parsnip> parsnipList;
+    std::vector<Turnip> turnipList;
 
     sf::Texture pathTexture;
     if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
@@ -57,7 +61,13 @@ int main()
     if (!Parsnip::textureGrowing.loadFromFile("src/assets/seeds.png") ||
         !Parsnip::textureMature.loadFromFile("src/assets/parsnip0.png"))
     {
-        // Handle the error
+        return -1;
+    }
+
+    if (!Turnip::textureGrowing.loadFromFile("src/assets/seeds.png") ||
+        !Turnip::textureMature.loadFromFile("src/assets/turnip0.png"))
+    {
+        return -1;
     }
 
     sf::Text timeText;
@@ -102,22 +112,46 @@ int main()
         return -1;
     }
 
-    sf::Texture parsnip1Texture;
-    if (!parsnip1Texture.loadFromFile("src/assets/parsnip1.png"))
+    std::vector<std::string> cropNames = {"parsnip", "turnip", "pink_turnip", "red_turnip", "carrot", "green_turnip", "winter_root", "beetroot"};
+    std::vector<sf::Texture> cropTextures;
+    std::vector<sf::Sprite> cropIcons;
+
+    int positionX = 147;
+    int positionY = 677;
+    int slotDistance = 52; // Distance between slots, if they are different distances apart adjust as needed.
+
+    // Preallocate space to avoid reallocation
+    cropTextures.reserve(cropNames.size());
+
+    for (const auto &cropName : cropNames)
     {
-        return -1;
+        sf::Texture texture;
+        if (!texture.loadFromFile("src/assets/" + cropName + "1.png"))
+        {
+            std::cout << "Failed to load texture for: " << cropName << std::endl;
+            return -1;
+        }
+        else
+        {
+            std::cout << "Successfully loaded texture for: " << cropName << std::endl;
+        }
+
+        // Store the texture in a vector
+        cropTextures.push_back(texture);
+
+        // Create a sprite from the last texture in the vector
+        sf::Sprite icon(cropTextures.back());
+
+        sf::Vector2u textureSize = texture.getSize();
+        float scaleX = static_cast<float>(50) / static_cast<float>(textureSize.x);
+        float scaleY = static_cast<float>(50) / static_cast<float>(textureSize.y);
+        icon.setScale(scaleX, scaleY);
+
+        icon.setPosition(positionX, positionY);
+        positionX += slotDistance; // Increment position for the next icon.
+
+        cropIcons.push_back(icon); // Store the icon in the vector.
     }
-
-    sf::Sprite parsnip1Icon;
-    parsnip1Icon.setTexture(parsnip1Texture);
-
-    sf::Vector2u textureSizeParsnip = parsnip1Texture.getSize();
-    float scaleXparsnip = static_cast<float>(50) / static_cast<float>(textureSizeParsnip.x);
-    float scaleYparsnip = static_cast<float>(50) / static_cast<float>(textureSizeParsnip.y);
-    parsnip1Icon.setScale(scaleXparsnip, scaleYparsnip);
-
-    // Position it on the third inventory slot, assuming inventory slots are 50 pixels apart
-    parsnip1Icon.setPosition(147, 677);
 
     sf::Sprite hoeIcon;
     hoeIcon.setTexture(hoeIconTexture);
@@ -233,7 +267,7 @@ int main()
                         {
                             if (it->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52) && it->isMature())
                             {
-                                myCropsToSell.addParsnip(*it); // Add mature parsnip to crops to sell
+                                myCropsToSell.addCrop(&(*it)); // Add mature parsnip to crops to sell
                                 it = parsnipList.erase(it);    // Remove harvested parsnip from the list
                             }
                             else
@@ -288,7 +322,7 @@ int main()
                                             parsnip.water();
                                         }
                                     }
-                                    if (wateringCanClicks >= 6)
+                                    if (wateringCanClicks >= 10)
                                     {
                                         wateringCanClicks = 0;
                                         wateringCanTextureIndex = (wateringCanTextureIndex + 1) % 5;
@@ -298,11 +332,12 @@ int main()
                             }
                             if (myInventory.getSelectedInventoryIndex() == 2)
                             {
+                                bool isTileWet = (myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture());
                                 if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture() ||
                                     myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
                                 {
                                     Parsnip newParsnip;
-                                    newParsnip.plant(x * tileSize, y * tileSize + 52); // Adjust coordinates if needed
+                                    newParsnip.plant(x * tileSize, y * tileSize + 52, isTileWet); // Pass in the isTileWet flag
                                     parsnipList.push_back(newParsnip);
                                 }
                             }
@@ -392,7 +427,14 @@ int main()
             parsnip.draw(window);
         }
 
-        window.draw(parsnip1Icon);
+        for (const auto &icon : cropIcons)
+        {
+            if (icon.getTexture() == nullptr)
+            {
+                std::cout << "Icon has no texture!" << std::endl;
+            }
+            window.draw(icon);
+        }
 
         window.draw(person.getSprite());
 
