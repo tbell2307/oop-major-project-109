@@ -401,6 +401,10 @@ int main()
                     int newSelection = event.key.code - sf::Keyboard::Num1;
                     myInventory.setSelection(newSelection);
                 }
+                else if (event.key.code == sf::Keyboard::Num0)
+                {
+                    myInventory.setSelection(9);
+                }
             }
             break;
 
