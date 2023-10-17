@@ -3,9 +3,9 @@
 
 Farm::Farm()
 {
-    if (!texture.loadFromFile("src/assets/grass.jpeg") ||
-        !soilTexture.loadFromFile("src/assets/soil.png") ||
-        !wetSoilTexture.loadFromFile("src/assets/wetSoil.png"))
+    if (!texture.loadFromFile("assets/grass.jpeg") ||
+        !soilTexture.loadFromFile("assets/soil.png") ||
+        !wetSoilTexture.loadFromFile("assets/wetSoil.png"))
     {
         exit(-1);
     }

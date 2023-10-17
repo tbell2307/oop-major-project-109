@@ -9,7 +9,7 @@ RedTurnip::RedTurnip() : SeasonalCrop("Summer", 3)
     sellValue = 50;
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
     {
-        if (!textureGrowing.loadFromFile("src/assets/seeds.png"))
+        if (!textureGrowing.loadFromFile("assets/seeds.png"))
         {
             std::cout << "Error loading seeds.png" << std::endl;
         }
@@ -17,7 +17,7 @@ RedTurnip::RedTurnip() : SeasonalCrop("Summer", 3)
 
     if (textureMature.getSize().x == 0 && textureMature.getSize().y == 0)
     {
-        if (!textureMature.loadFromFile("src/assets/red_turnip0.png"))
+        if (!textureMature.loadFromFile("assets/red_turnip0.png"))
         {
             std::cout << "Error loading red_turnip0.png" << std::endl;
         }

@@ -9,7 +9,7 @@ Beetroot::Beetroot() : SeasonalCrop("Spring", 10)
     sellValue = 300;
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
     {
-        if (!textureGrowing.loadFromFile("src/assets/seeds.png"))
+        if (!textureGrowing.loadFromFile("assets/seeds.png"))
         {
             std::cout << "Error loading seeds.png" << std::endl;
         }
@@ -17,7 +17,7 @@ Beetroot::Beetroot() : SeasonalCrop("Spring", 10)
 
     if (textureMature.getSize().x == 0 && textureMature.getSize().y == 0)
     {
-        if (!textureMature.loadFromFile("src/assets/beetroot0.png"))
+        if (!textureMature.loadFromFile("assets/beetroot0.png"))
         {
             std::cout << "Error loading beetroot0.png" << std::endl;
         }

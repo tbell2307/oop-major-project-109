@@ -9,7 +9,7 @@ Parsnip::Parsnip() : SeasonalCrop("Spring", 4)
     sellValue = 30;
     if (textureGrowing.getSize().x == 0 && textureGrowing.getSize().y == 0)
     {
-        if (!textureGrowing.loadFromFile("src/assets/seeds.png"))
+        if (!textureGrowing.loadFromFile("assets/seeds.png"))
         {
             std::cout << "Error loading seeds.png" << std::endl;
         }
@@ -17,7 +17,7 @@ Parsnip::Parsnip() : SeasonalCrop("Spring", 4)
 
     if (textureMature.getSize().x == 0 && textureMature.getSize().y == 0)
     {
-        if (!textureMature.loadFromFile("src/assets/parsnip0.png"))
+        if (!textureMature.loadFromFile("assets/parsnip0.png"))
         {
             std::cout << "Error loading parsnip0.png" << std::endl;
         }

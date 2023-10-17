@@ -42,8 +42,8 @@ int main()
 
     // Load textures
     std::vector<std::string> weatherFiles = {
-        "src/assets/sunny.png",
-        "src/assets/rainy.png",
+        "assets/sunny.png",
+        "assets/rainy.png",
     };
 
     if (!myWeather.loadTextures(weatherFiles))
@@ -76,13 +76,13 @@ int main()
     };
 
     sf::Texture pathTexture;
-    if (!pathTexture.loadFromFile("src/assets/path.jpeg"))
+    if (!pathTexture.loadFromFile("assets/path.jpeg"))
     {
         return -1;
     }
 
     sf::Font font;
-    if (!font.loadFromFile("src/assets/font.ttf"))
+    if (!font.loadFromFile("assets/font.ttf"))
     {
         return -1;
     }
@@ -108,43 +108,43 @@ int main()
     moneyText.setPosition(355, 10);
 
     sf::Texture waterTexture;
-    if (!waterTexture.loadFromFile("src/assets/water.jpeg"))
+    if (!waterTexture.loadFromFile("assets/water.jpeg"))
     {
         return -1;
     }
 
     sf::Texture houseTexture;
-    if (!houseTexture.loadFromFile("src/assets/house.png"))
+    if (!houseTexture.loadFromFile("assets/house.png"))
     {
         return -1;
     }
 
     sf::Texture bedTexture;
-    if (!bedTexture.loadFromFile("src/assets/bed.png"))
+    if (!bedTexture.loadFromFile("assets/bed.png"))
     {
         return -1;
     }
 
     sf::Texture moneyTexture;
-    if (!moneyTexture.loadFromFile("src/assets/money.jpeg"))
+    if (!moneyTexture.loadFromFile("assets/money.jpeg"))
     {
         return -1;
     }
 
     sf::Texture lTimeTexture;
-    if (!lTimeTexture.loadFromFile("src/assets/time-left.png"))
+    if (!lTimeTexture.loadFromFile("assets/time-left.png"))
     {
         return -1;
     }
 
     sf::Texture rTimeTexture;
-    if (!rTimeTexture.loadFromFile("src/assets/time-right.png"))
+    if (!rTimeTexture.loadFromFile("assets/time-right.png"))
     {
         return -1;
     }
 
     sf::Texture hoeIconTexture;
-    if (!hoeIconTexture.loadFromFile("src/assets/hoe.png"))
+    if (!hoeIconTexture.loadFromFile("assets/hoe.png"))
     {
         return -1;
     }
@@ -163,7 +163,7 @@ int main()
     for (const auto &cropName : cropNames)
     {
         sf::Texture texture;
-        if (!texture.loadFromFile("src/assets/" + cropName + "1.png"))
+        if (!texture.loadFromFile("assets/" + cropName + "1.png"))
         {
             std::cout << "Failed to load texture for: " << cropName << std::endl;
             return -1;
@@ -204,7 +204,7 @@ int main()
     sf::Texture wateringCanTextures[5];
     for (int i = 1; i <= 5; ++i)
     {
-        if (!wateringCanTextures[i - 1].loadFromFile("src/assets/wateringcan" + std::to_string(i) + ".png"))
+        if (!wateringCanTextures[i - 1].loadFromFile("assets/wateringcan" + std::to_string(i) + ".png"))
         {
             return -1;
         }
@@ -272,7 +272,7 @@ int main()
     // Define tile size
     int tileSize = 50;
 
-    Person person("src/assets/person.png", tileSize);
+    Person person("assets/person.png", tileSize);
     person.setPosition(52 + 1, 52 + 1);
 
     /////////////////////////////

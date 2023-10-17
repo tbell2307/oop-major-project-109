@@ -22,8 +22,8 @@ Inventory::Inventory()
     CropBuyPrice[8] = 80;
     CropBuyPrice[9] = 90;
     // Load textures
-    if (!inventoryTexture.loadFromFile("src/assets/inventory.jpeg") ||
-        !inventoryBackgroundTexture.loadFromFile("src/assets/inventory-background.jpeg"))
+    if (!inventoryTexture.loadFromFile("assets/inventory.jpeg") ||
+        !inventoryBackgroundTexture.loadFromFile("assets/inventory-background.jpeg"))
     {
         throw std::runtime_error("Failed to load textures");
     }
@@ -79,7 +79,7 @@ void Inventory::draw(sf::RenderWindow &window)
     }
 
     sf::Font font; // Font for the text
-    if (!font.loadFromFile("src/assets/font.ttf"))
+    if (!font.loadFromFile("assets/font.ttf"))
     {
         std::cout << "Failed to load font" << std::endl;
     }
