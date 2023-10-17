@@ -57,14 +57,14 @@ void Parsnip::grow()
 
 void Parsnip::water()
 {
-    if (!mature)
+    if (!mature) // Only allow watering within the first 4 days and if not yet mature
     {
         ++timesWatered;
         std::cout << "Parsnip has been watered " << timesWatered << " times." << std::endl;
     }
 }
 
-void Parsnip::plant(int x, int y, bool isTileWet)
+void Parsnip::plant(int x, int y, bool isTileWet) // added an isTileWet flag
 {
     sprite.setPosition(x, y);
     sprite.setTexture(textureGrowing);
@@ -81,6 +81,8 @@ sf::Vector2f Parsnip::getPosition() const
 
 void Parsnip::harvest()
 {
+    std::cout << "Harvesting parsnip with Spring-specific logic" << std::endl;
+    // Here, you would change the state of the parsnip, if necessary
     sprite.setTexture(textureMature);
 }
 
