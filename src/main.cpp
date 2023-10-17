@@ -125,12 +125,6 @@ int main()
         return -1;
     }
 
-    sf::Texture shopTexture;
-    if (!shopTexture.loadFromFile("src/assets/shop.png"))
-    {
-        return -1;
-    }
-
     sf::Texture moneyTexture;
     if (!moneyTexture.loadFromFile("src/assets/money.jpeg"))
     {
@@ -232,10 +226,7 @@ int main()
 
     sf::RectangleShape waterTiles[12];
     sf::RectangleShape bedTile;
-    sf::RectangleShape shopTile;
 
-    shopTile.setSize(sf::Vector2f(50, 50));
-    shopTile.setTexture(&shopTexture);
     bedTile.setSize(sf::Vector2f(50, 50));
     bedTile.setTexture(&bedTexture);
 
@@ -259,7 +250,6 @@ int main()
         else if (i == 6)
         {
             waterTiles[i].setTexture(&houseTexture);
-            shopTile.setPosition(i * 50, 0);
         }
         else if (i == 7 || i == 8)
         {
@@ -574,8 +564,6 @@ int main()
         window.draw(hoeIcon);
 
         window.draw(bedTile);
-
-        window.draw(shopTile);
 
         for (auto &crop : cropList)
         {
