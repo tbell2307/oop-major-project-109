@@ -6,6 +6,7 @@
 #include "Weather.h"
 #include "Time.h"
 #include "Parsnip.h"
+
 #include "Turnip.h"
 #include "CropsToSell.h"
 #include "Money.h"
@@ -25,8 +26,6 @@ int main()
     Inventory myInventory;
     Weather myWeather;
     Time myTime;
-    Parsnip myParsnip;
-    Turnip myTurnip;
     CropsToSell myCropsToSell;
     Money myMoney(0);
 
@@ -56,12 +55,6 @@ int main()
 
     sf::Font font;
     if (!font.loadFromFile("src/assets/font.ttf"))
-    {
-        return -1;
-    }
-
-    if (!Parsnip::textureGrowing.loadFromFile("src/assets/seeds.png") ||
-        !Parsnip::textureMature.loadFromFile("src/assets/parsnip0.png"))
     {
         return -1;
     }
@@ -303,7 +296,7 @@ int main()
                     // Check if the clicked tile is adjacent to or the same as where the person is standing
                     if (abs(x - personTileX) <= 1 && abs(y - personTileY) <= 1)
                     {
-                        // Loop through parsnips to find if any are mature and can be harvested.
+                        // Loop through crops to find if any are mature and can be harvested.
                         for (auto it = cropList.begin(); it != cropList.end();)
                         {
                             if ((*it)->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52) && (*it)->isMature())
@@ -359,7 +352,7 @@ int main()
                                 {
                                     myFarm.setTileTexture(x, y, myFarm.getWetSoilTexture());
                                     wateringCanClicks++;
-                                    // Find the parsnip at this location and water it
+                                    // Find the crops at this location and water it
                                     for (auto &crop : cropList)
                                     {
                                         if (crop->getPosition() == sf::Vector2f(x * tileSize, y * tileSize + 52))
@@ -381,8 +374,7 @@ int main()
                                 if (myFarm.getTileTexture(x, y) == myFarm.getSoilTexture() ||
                                     myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
                                 {
-                                    std::unique_ptr<Crop> newCrop = std::make_unique<Parsnip>(); // Changed to Parsnip here
-                                    std::cout << "Required Waterings for this Parsnip: " << newCrop->getRequiredWaterings() << std::endl;
+                                    std::unique_ptr<Crop> newCrop = std::make_unique<Parsnip>();
 
                                     newCrop->plant(x * tileSize, y * tileSize + 52, isTileWet);
                                     cropList.push_back(std::move(newCrop));
@@ -396,7 +388,6 @@ int main()
                                     myFarm.getTileTexture(x, y) == myFarm.getWetSoilTexture())
                                 {
                                     std::unique_ptr<Crop> newCrop = std::make_unique<Turnip>();
-                                    std::cout << "Required Waterings for this Turnip: " << newCrop->getRequiredWaterings() << std::endl; // Assuming you have a getter for requiredWaterings
 
                                     newCrop->plant(x * tileSize, y * tileSize + 52, isTileWet);
                                     cropList.push_back(std::move(newCrop));
